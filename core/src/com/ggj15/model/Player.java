@@ -57,22 +57,48 @@ public class Player extends Sprite {
     }
 
     public void stopLeft() {
-        vx += speed;
+        if (gravity.getOpposite() == Direction.BOTTOM)
+            vx += speed;
+        else if (gravity.getOpposite() == Direction.TOP)
+            vx -= speed;
+
     }
 
     public void stopRight() {
-        vx -= speed;
+        if (gravity.getOpposite() == Direction.BOTTOM)
+            vx -= speed;
+        else if (gravity.getOpposite() == Direction.TOP)
+            vx += speed;
     }
 
     public void goLeft() {
-        vx -= speed;
+        if (gravity.getOpposite() == Direction.BOTTOM)
+            vx -= speed;
+        else if (gravity.getOpposite() == Direction.TOP)
+            vx += speed;
     }
 
     public void goRight() {
-        vx += speed;
+        if (gravity.getOpposite() == Direction.BOTTOM)
+            vx += speed;
+        else if (gravity.getOpposite() == Direction.TOP)
+            vx -= speed;
     }
 
     public void goesUp() {
+        if (gravity.getOpposite() == Direction.BOTTOM)
+            jump();
+        else if (gravity.getOpposite() == Direction.TOP)
+            take();
+        else if (gravity.getOpposite() == Direction.LEFT)
+
+    }
+
+    private void take() {
+
+    }
+
+    private void jump() {
         maxHeight = getY() + jumpHeight;
         vy = jumpHeight;
         goesUp = true;
