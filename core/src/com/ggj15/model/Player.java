@@ -91,7 +91,9 @@ public class Player extends Sprite {
         else if (gravity.getOpposite() == Direction.TOP)
             take();
         else if (gravity.getOpposite() == Direction.LEFT)
-
+            vy += speed;
+        else if (gravity.getOpposite() == Direction.RIGHT)
+            vy -= speed;
     }
 
     private void take() {
