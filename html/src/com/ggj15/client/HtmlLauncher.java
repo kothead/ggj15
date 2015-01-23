@@ -1,9 +1,9 @@
-package com.ggj15.ggj15.client;
+package com.ggj15.client;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.ggj15.ggj15.GGJGame;
+import com.ggj15.GGJGame;
 
 public class HtmlLauncher extends GwtApplication {
 

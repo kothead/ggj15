@@ -4,7 +4,7 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 
 	<inherits name='GGJGame' />
-	<entry-point class='com.ggj15.ggj15.client.HtmlLauncher' />
+	<entry-point class='com.ggj15.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 </module>

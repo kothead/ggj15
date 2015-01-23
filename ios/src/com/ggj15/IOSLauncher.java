@@ -1,11 +1,10 @@
-package com.ggj15.ggj15;
+package com.ggj15;
 
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import com.ggj15.ggj15.GGJGame;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
