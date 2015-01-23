@@ -1,4 +1,4 @@
-package com.ggj15.data;
+package com.ggj15.model;
 
 /**
  * Created by st on 12/7/14.
