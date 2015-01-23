@@ -1,7 +1,5 @@
 package com.ggj15.data;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -9,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * Created by st on 7/29/14.
  */
 public class ImageCache {
-    
+
+    public static final String PLAYER = "floor";
+
     private static final String DATA_DIR = "assets/data/";
     private static final String DATA_FILE = "pack.atlas";
     
