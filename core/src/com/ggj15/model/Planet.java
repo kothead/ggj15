@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.ImageCache;
 import com.ggj15.screen.GameScreen;
+
+import java.util.Random;
 
 /**
  * Created by st on 1/24/15.
@@ -29,7 +32,7 @@ public class Planet {
     }
 
     public enum Block {
-        ROCK, SOIL, GRASS;
+        ROCK, TERRA, GRASS;
 
         private TextureRegion texture;
 
@@ -227,9 +230,17 @@ public class Planet {
     public static class Builder {
 
         private static final int DEFAULT_INKED_COUNT = 10;
+        public enum PlanetType {ROCK, GRASS};
 
         private Planet instance;
         private int inkedCount;
+        private PlanetType planetType;
+
+        private Random random = new Random();
+
+        {
+            random.setSeed(654654L);
+        }
 
         public Builder() {
             instance = new Planet();
@@ -237,6 +248,7 @@ public class Planet {
             instance.height = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.force = DEFAULT_GRAVITY_FORCE;
             inkedCount = DEFAULT_INKED_COUNT;
+            planetType = PlanetType.GRASS;
         }
 
         public Builder width(int width) {
@@ -263,14 +275,63 @@ public class Planet {
             instance.tiles = new Block[instance.height][instance.width];
 
             // TODO: delete
+            switch (planetType){
+                case ROCK:
+                    rockStrategy();
+                    break;
+                case GRASS:
+                    grassStrategy();
+                    break;
+                default:
+                    rockStrategy();
+            }
+
+            instance.calcLimits();
+            return instance;
+        }
+
+        private void rockStrategy() {
             for (int i = SAFE_SIDE_SIZE; i < instance.height - SAFE_SIDE_SIZE; i++) {
                 for (int j = SAFE_SIDE_SIZE; j < instance.width - SAFE_SIDE_SIZE; j++) {
                     instance.tiles[i][j] = Block.ROCK;
                 }
             }
+        }
 
-            instance.calcLimits();
-            return instance;
+        private void grassStrategy() {
+            for (int i = SAFE_SIDE_SIZE; i < instance.height - SAFE_SIDE_SIZE; i++) {
+                for (int j = SAFE_SIDE_SIZE; j < instance.width - SAFE_SIDE_SIZE; j++) {
+                    if(getBoundaryLevel(i,j)==0){
+                        if(random.nextInt(10)!=0){
+                            instance.tiles[i][j] = Block.GRASS;
+                        } else {
+                            instance.tiles[i][j] = Block.TERRA;
+                        }
+                    } else if (getBoundaryLevel(i,j)>0 && getBoundaryLevel(i,j)<3){
+                        if(random.nextInt(4)!=0){
+                            instance.tiles[i][j] = Block.TERRA;
+                        } else {
+                            instance.tiles[i][j] = Block.ROCK;
+                        }
+                    } else {
+                        instance.tiles[i][j] = Block.ROCK;
+                    }
+                }
+            }
+        }
+
+        public int getBoundaryLevel(int i, int j){
+            int[] boundaryLevels = new int[]{Math.abs(i-SAFE_SIDE_SIZE),
+                    Math.abs(j-SAFE_SIDE_SIZE),
+                    Math.abs(i-instance.height + SAFE_SIDE_SIZE+1),
+                    Math.abs(j-instance.width + SAFE_SIDE_SIZE+1) };
+            int min = boundaryLevels [0];
+            for (int k = 1; k < 4; k++) {
+                if(min>boundaryLevels[k]){
+                    min = boundaryLevels[k];
+                }
+            }
+            return min;
         }
     }
 
