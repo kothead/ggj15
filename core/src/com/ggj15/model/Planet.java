@@ -75,6 +75,24 @@ public class Planet {
         }
     }
 
+    public Block takeBlock(int x, int y) {
+        int idx = getIndex(x);
+        int idy = getIndex(y) + 1;
+        Block block = tiles[idy][idx];
+        tiles[idy][idx] = null;
+        return block;
+    }
+
+    public boolean putBlock(Block block, int x, int y) {
+        int idx = getIndex(x);
+        int idy = getIndex(y) + 1;
+        if (tiles[idy][idx] == null) {
+            tiles[idy][idx] = block;
+            return true;
+        }
+        return false;
+    }
+
     /*
     TODO: change collision check. Do not iterate over all blocks. Choose wisely
      */
