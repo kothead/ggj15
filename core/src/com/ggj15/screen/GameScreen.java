@@ -5,10 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
-import com.ggj15.model.*;
+import com.ggj15.model.Background;
+import com.ggj15.model.Hole;
+import com.ggj15.model.Planet;
+import com.ggj15.model.Player;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -56,6 +60,11 @@ public class GameScreen extends BaseScreen {
         stage.addActor(hole.getActor());
 
         Gdx.input.setInputProcessor(new Processor());
+
+        Table t = new Table();
+        t.debugTable();
+        t.setFillParent(true);
+        stage.addActor(t);
     }
 
     @Override

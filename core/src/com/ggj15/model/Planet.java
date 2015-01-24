@@ -282,9 +282,11 @@ public class Planet {
             Gdx.app.log("Test:", "height " + (Planet.this.getHeight() * GameScreen.scaleFactorY));
             Gdx.app.log("Test:", "planet heiht " + height);
             batch.draw(ImageCache.getTexture("rock"),
-                    Planet.this.x * GameScreen.scaleFactorX,
+                    getStage().getWidth() - Planet.this.getWidth() * GameScreen.scaleFactorX,
+                    getStage().getHeight() - Planet.this.getCleanHeight() * GameScreen.scaleFactorY,
+                   /* Planet.this.x * GameScreen.scaleFactorX,
                     getStage().getHeight() - Planet.this.y * GameScreen.scaleFactorY - Planet.this.getCleanHeight() * GameScreen.scaleFactorY,
-                    Planet.this.getCleanWidth() * GameScreen.scaleFactorX,
+*/                    Planet.this.getCleanWidth() * GameScreen.scaleFactorX,
                     Planet.this.getCleanHeight() * GameScreen.scaleFactorY);
         }
     }
