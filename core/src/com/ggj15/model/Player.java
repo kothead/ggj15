@@ -3,12 +3,14 @@ package com.ggj15.model;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ggj15.data.Direction;
+import com.ggj15.data.ImageCache;
 
 /**
  * Created by kettricken on 24.01.2015.
  */
 public class Player extends Sprite {
+
+    private static final String GRASS = "grass";
 
     private final float FLY_THRESHOLD = 1;
     private final float speed = 50;
@@ -24,10 +26,10 @@ public class Player extends Sprite {
     boolean isUpPressed = false;
     boolean flying = false;
 
-    Direction gravity;
+    Direction gravity = Direction.BOTTOM;
 
-    public Player(TextureRegion texture) {
-        setRegion(texture);
+    public Player() {
+        setRegion(ImageCache.getTexture(GRASS));
         setX(100);
         setY(40);
     }
@@ -47,7 +49,7 @@ public class Player extends Sprite {
         setX(getX() + vx * delta);
         setY(getY() + vy * delta);
 
-        batch.draw(getTexture(), getX(), getY());
+        batch.draw(this, getX(), getY());
     }
 
     private void startFly() {

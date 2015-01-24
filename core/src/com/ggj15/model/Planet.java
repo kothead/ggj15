@@ -58,7 +58,12 @@ public class Planet {
         return y;
     }
 
-    public void render(SpriteBatch batch) {
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void draw(float delta, SpriteBatch batch) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Block block = tiles[i][j];

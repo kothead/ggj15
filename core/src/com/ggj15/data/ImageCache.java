@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class ImageCache {
 
-    public static final String PLAYER = "floor";
-
     private static final String DATA_DIR = "assets/data/";
     private static final String DATA_FILE = "pack.atlas";
     
