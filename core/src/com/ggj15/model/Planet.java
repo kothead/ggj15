@@ -351,11 +351,16 @@ public class Planet {
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
+
+            float offsetX = getStage().getWidth() / 2f;
+            float offsetY = getStage().getHeight() / 2f;
+
             float width = Planet.this.getCleanWidth() * Configuration.scaleFactorX;
             float height = Planet.this.getCleanHeight() * Configuration.scaleFactorY;
+
             batch.draw(ImageCache.getTexture("rock"),
-                    (Planet.this.x + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorX,
-                    (Planet.this.y + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorY,
+                    (Planet.this.x + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorX + offsetX,
+                    (Planet.this.y + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorY + offsetY,
                     width, height);
         }
 

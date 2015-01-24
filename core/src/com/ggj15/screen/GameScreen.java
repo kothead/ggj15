@@ -35,39 +35,31 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(GGJGame game) {
         super(game);
-        Planet planet;
-
         this.game = game;
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
 
         // TODO: find world max width and height
-        Configuration.scaleFactorX = mapStage.getWidth() / Configuration.worldMaxWidth;
-        Configuration.scaleFactorY = mapStage.getHeight() / Configuration.worldMaxHeight;
+        Configuration.scaleFactorX = mapStage.getWidth() / (Configuration.worldMaxWidth - Configuration.worldMaxWidth);
+        Configuration.scaleFactorY = mapStage.getHeight() / Configuration.worldMaxHeight - Configuration.worldMaxHeight;
 
         background= new Background((int) getWorldWidth(), (int) getWorldHeight());
 
         player = new Player();
 
-
-        planet = new Planet.Builder().width(11).height(11).build();
-        planet.setPosition(50, 50);
-        planets.add(planet);
-
         for (int i = 1; i < 4; i++) {
-            planet = new Planet.Builder().width(7+i).height(7+i).build();
+            Planet planet = new Planet.Builder().width(7+i).height(7+i).build();
             planet.setPosition(-900*i, 50);
             planets.add(planet);
+            mapStage.addActor(planet.getActor());
         }
 
-        mapStage.addActor(planet.getActor());
         mapStage.addActor(player.getActor());
 
         hole = new Hole(planets);
         mapStage.addActor(hole.getActor());
 
         planetController = new PlanetController(planets);
-
 
         Table table = new Table();
         table.setFillParent(true);
@@ -98,9 +90,7 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
 
-        for(Planet planet: planets){
-            player.process(delta, planet);
-        }
+        player.process(delta, planets);
 
         Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
