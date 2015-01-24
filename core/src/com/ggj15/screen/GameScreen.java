@@ -5,10 +5,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
+import com.ggj15.data.Configuration;
 import com.ggj15.model.*;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -25,45 +30,56 @@ public class GameScreen extends BaseScreen {
 
     boolean mapMode = false;
 
-    private Stage stage;
-
-    private float world_max_width = 3000;
-    private float world_max_height = 1800;
-    public static float scaleFactorX;
-    public static float scaleFactorY;
+    private Stage mapStage;
 
     public GameScreen(GGJGame game) {
         super(game);
 
         this.game = game;
 
-        stage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
+        mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
 
-        scaleFactorX = stage.getWidth() / world_max_width;
-        scaleFactorY = stage.getHeight() / world_max_height;
+        // TODO: find world max width and height
+        Configuration.scaleFactorX = mapStage.getWidth() / Configuration.worldMaxWidth;
+        Configuration.scaleFactorY = mapStage.getHeight() / Configuration.worldMaxHeight;
 
         background= new Background((int) getWorldWidth(), (int) getWorldHeight());
 
         player = new Player();
-        stage.addActor(player.getActor());
+
 
         planet = new Planet.Builder().width(11).height(11).build();
-        planet.setPosition(70, 20);
+        planet.setPosition(50, 50);
         planets.add(planet);
-        stage.addActor(planet.getActor());
+        mapStage.addActor(planet.getActor());
+        mapStage.addActor(player.getActor());
 
         hole = new Hole(planets);
-        stage.addActor(hole.getActor());
+        mapStage.addActor(hole.getActor());
+
+        Table table = new Table();
+        table.setFillParent(true);
+        stage().addActor(table);
+        table.right().bottom().padBottom(10).padRight(15);
+
+        HoleIndicator holeIndicator = new HoleIndicator();
+        table.add(holeIndicator);
+
+        table.add().expandX();
+
+        InkIndicator inkIndicator = new InkIndicator();
+        table.add(inkIndicator);
 
         Gdx.input.setInputProcessor(new Processor());
+
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        stage.getViewport().update(width, height, true);
-        scaleFactorX = stage.getWidth() / world_max_width;
-        scaleFactorY = stage.getHeight() / world_max_height;
+        mapStage.getViewport().update(width, height, true);
+        Configuration.scaleFactorX = mapStage.getWidth() / Configuration.worldMaxWidth;
+        Configuration.scaleFactorY = mapStage.getHeight() / Configuration.worldMaxHeight;
     }
 
     @Override
@@ -85,23 +101,28 @@ public class GameScreen extends BaseScreen {
         batch().begin();
         background.setPosition(player.getX() - getWorldWidth() / 2, player.getY() - getWorldHeight() / 2);
         background.draw(batch(), 0, 0);
-        player.draw(batch());
-        planet.draw(delta, batch());
-        hole.draw(delta, batch());
+        if (!mapMode) {
+            player.draw(batch());
+            planet.draw(delta, batch());
+            hole.draw(delta, batch());
+        }
         batch().end();
 
-        hole.draw(shapes(), delta);
-
-        if (mapMode) {
-            stage.act(delta);
-            stage.draw();
+        if (!mapMode)
+            hole.draw(shapes(), delta);
+         else {
+            mapStage.act(delta);
+            mapStage.draw();
         }
+
+        stage().act();
+        stage().draw();
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        stage.dispose();
+        mapStage.dispose();
     }
 
     private class Processor extends InputAdapter {
@@ -120,6 +141,17 @@ public class GameScreen extends BaseScreen {
             switch (keycode) {
                 case Input.Keys.M:
                     mapMode = !mapMode;
+                    if (mapMode) {
+                        Gdx.app.log("Test:", "animation is called");
+                        mapStage.addAction(sequence(alpha(0), fadeIn(3f), new RunnableAction() {
+                                    @Override
+                                    public boolean act(float delta) {
+                                        Gdx.app.log("Test:", "lastAction");
+                                        return true;
+                                    }
+                                }
+                        ));
+                    }
                     break;
 
                 default:

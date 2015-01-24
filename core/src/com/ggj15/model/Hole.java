@@ -10,8 +10,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
-import com.ggj15.screen.GameScreen;
 
 import java.util.Iterator;
 
@@ -39,7 +39,7 @@ public class Hole extends Sprite {
     public Hole(Array<Planet> planets) {
         super();
         this.planets = planets;
-        center = new Vector2(1500, 600);
+        center = new Vector2(Configuration.worldMaxWidth / 2, Configuration.worldMaxHeight / 2);
 
         setX(center.x - getWidth() / 2);
         setY(center.y - getHeight() / 2);
@@ -120,10 +120,11 @@ public class Hole extends Sprite {
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
-            batch.draw(Hole.this, Hole.this.getX()* GameScreen.scaleFactorX,
-                    getStage().getHeight() - Hole.this.getY() * GameScreen.scaleFactorY - Hole.this.getHeight() * GameScreen.scaleFactorY,
-                    Hole.this.getWidth() * GameScreen.scaleFactorX,
-                    Hole.this.getHeight() * GameScreen.scaleFactorY);
+            batch.draw(Hole.this,
+                    Hole.this.getX() * Configuration.scaleFactorX,
+                    Hole.this.getY() * Configuration.scaleFactorY,
+                    Hole.this.getWidth() * Configuration.scaleFactorX,
+                    Hole.this.getHeight() * Configuration.scaleFactorY);
         }
     }
 }
