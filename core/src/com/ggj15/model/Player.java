@@ -21,6 +21,8 @@ public class Player extends Sprite {
     private final float JUMP_ACCEL = 300f;
     private final float INK_ACCEL = 10f;
 
+    private static final String CHAR_STAND = "char-stand";
+
     private float vx, vy;
     private boolean flying = false;
     private Direction gravity = Direction.DOWN;
@@ -29,9 +31,11 @@ public class Player extends Sprite {
     private PlayerActor actor;
 
     public Player() {
-        setRegion(ImageCache.getTexture(GRASS));
+        setRegion(ImageCache.getFrame(CHAR_STAND, 1));
+        setSize(getRegionWidth(), getRegionHeight());
         setX(50);
         setY(500);
+        setOriginCenter();
 
         actor = new PlayerActor();
     }
@@ -72,14 +76,29 @@ public class Player extends Sprite {
         setY(getY() + dy);
     }
 
-    public void draw(float delta, SpriteBatch batch) {
-        if (flying) {
+    @Override
+    public void draw(Batch batch) {
+        switch (gravity) {
+            case DOWN:
+                setRotation(0);
+                break;
 
-        } else {
+            case UP:
+                setRotation(180);
+                break;
 
+            case LEFT:
+                setRotation(270);
+                break;
+
+            case RIGHT:
+                setRotation(90);
+                break;
         }
 
-        batch.draw(this, getX(), getY());
+        super.draw(batch);
+        batch.draw(this, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
+                getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     private void startFly() {
