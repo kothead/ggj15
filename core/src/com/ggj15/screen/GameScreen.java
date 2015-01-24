@@ -22,7 +22,7 @@ public class GameScreen extends BaseScreen {
 
         this.game = game;
         player = new Player();
-        planet = new Planet.Builder().width(5).height(5).build();
+        planet = new Planet.Builder().width(11).height(11).build();
         planet.setPosition(20, 20);
 
         Gdx.input.setInputProcessor(new Processor());
@@ -36,6 +36,10 @@ public class GameScreen extends BaseScreen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        getCamera().position.set(player.getX(), player.getY(), 0);
+        getCamera().update();
+        batch().setProjectionMatrix(getCamera().combined);
 
         batch().begin();
         player.draw(delta, batch());

@@ -88,11 +88,14 @@ public class Planet {
         }
     }
 
-    public Block takeBlock(int x, int y) {
-        int idx = getHorizontalIndex(x);
-        int idy = getVerticalIndex(y) - 1;
+    public Block takeBlock(Direction gravity, int x, int y) {
+        int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
+        int idy = getVerticalIndex(y) + Direction.getDy(gravity);
         Block block = tiles[idy][idx];
-        tiles[idy][idx] = null;
+        if (block != null) {
+            tiles[idy][idx] = null;
+            calcLimits();
+        }
         return block;
     }
 
@@ -101,9 +104,34 @@ public class Planet {
         int idy = getVerticalIndex(y);
         if (tiles[idy][idx] == null) {
             tiles[idy][idx] = block;
+            calcLimits();
             return true;
         }
         return false;
+    }
+
+    public Direction getNewGravity(Direction gravity, int x, int y) {
+        int idx = getHorizontalIndex(x);
+        int idy = getVerticalIndex(y);
+
+        switch (gravity) {
+            case UP:
+            case DOWN:
+                if (idy >= minY && idy <= maxY) {
+                    if (idx < minX) return Direction.RIGHT;
+                    if (idx > maxX) return Direction.LEFT;
+                }
+                break;
+
+            case LEFT:
+            case RIGHT:
+                if (idx >= minX && idx <= maxX) {
+                    if (idy < minY) return Direction.UP;
+                    if (idy > minY) return Direction.DOWN;
+                }
+                break;
+        }
+        return gravity;
     }
 
     /*

@@ -30,6 +30,7 @@ public class Player extends Sprite {
     }
 
     public void process(float delta, Planet planet) {
+        gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
         processInput(planet);
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
         boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W);
@@ -49,7 +50,7 @@ public class Player extends Sprite {
                 break;
 
             case RIGHT:
-                vx -= (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0) + force;
+                vx += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0) + force;
                 break;
         }
         float dx = vx * delta;
@@ -85,9 +86,9 @@ public class Player extends Sprite {
             } else if (gravity == Direction.UP) {
                 vx = WALK_SPEED;
             } else if (gravity == Direction.LEFT) {
-                vy = -WALK_SPEED;
-            } else if (gravity == Direction.RIGHT) {
                 vy = WALK_SPEED;
+            } else if (gravity == Direction.RIGHT) {
+                vy = -WALK_SPEED;
             }
         }
 
@@ -97,15 +98,15 @@ public class Player extends Sprite {
             } else if (gravity == Direction.UP) {
                 vx = -WALK_SPEED;
             } else if (gravity == Direction.LEFT) {
-                vy = WALK_SPEED;
-            } else if (gravity == Direction.RIGHT) {
                 vy = -WALK_SPEED;
+            } else if (gravity == Direction.RIGHT) {
+                vy = +WALK_SPEED;
             }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             if (block == null) {
-                block = planet.takeBlock(getCenterX(), getCenterY());
+                block = planet.takeBlock(gravity, getCenterX(), getCenterY());
             } else {
                 Gdx.app.log("test", "trying to put block");
                 boolean success = planet.putBlock(block, getCenterX(), getCenterY());
