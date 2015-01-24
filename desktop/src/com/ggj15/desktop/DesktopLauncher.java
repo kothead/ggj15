@@ -13,8 +13,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		packAssets();
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = Configuration.WORLD_WIDTH * Configuration.SCALE_FACTOR;
-		config.height = Configuration.WORLD_HEIGHT * Configuration.SCALE_FACTOR;
+		config.width = (int) (Configuration.WORLD_WIDTH * Configuration.SCALE_FACTOR);
+		config.height = (int) (Configuration.WORLD_HEIGHT * Configuration.SCALE_FACTOR);
 		config.resizable = false;
 		config.title = "Ink must flow";
 		new LwjglApplication(new GGJGame(), config);

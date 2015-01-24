@@ -4,25 +4,25 @@ package com.ggj15.model;
  * Created by st on 12/7/14.
  */
 public enum Direction {
-    TOP, RIGHT, BOTTOM, LEFT;
+    UP, RIGHT, DOWN, LEFT;
 
     private static Direction[] directions;
 
     private Direction opposite;
 
     static {
-        TOP.opposite = BOTTOM;
+        UP.opposite = DOWN;
         RIGHT.opposite = LEFT;
-        BOTTOM.opposite = TOP;
+        DOWN.opposite = UP;
         LEFT.opposite = RIGHT;
-        directions = new Direction[] {TOP, RIGHT, BOTTOM, LEFT};
+        directions = new Direction[] {UP, RIGHT, DOWN, LEFT};
     }
 
     public static Direction getByOffset(int dx, int dy) {
         if (dx > 0) return RIGHT;
         if (dx < 0) return LEFT;
-        if (dy > 0) return TOP;
-        if (dy < 0) return BOTTOM;
+        if (dy > 0) return UP;
+        if (dy < 0) return DOWN;
         return null;
     }
 
@@ -33,8 +33,8 @@ public enum Direction {
     }
 
     public static int getDy(Direction dir) {
-        if (dir == BOTTOM) return -1;
-        if (dir == TOP) return 1;
+        if (dir == DOWN) return -1;
+        if (dir == UP) return 1;
         return 0;
     }
 

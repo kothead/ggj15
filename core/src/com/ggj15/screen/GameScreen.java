@@ -4,9 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.ggj15.GGJGame;
-import com.ggj15.data.ImageCache;
 import com.ggj15.model.Planet;
 import com.ggj15.model.Player;
 
@@ -34,6 +32,8 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
 
+        player.process(delta, planet);
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -47,33 +47,6 @@ public class GameScreen extends BaseScreen {
         @Override
         public boolean keyUp(int keycode) {
             switch (keycode) {
-                case Input.Keys.W:
-                    player.stopGoingUp();
-                    return true;
-
-                case Input.Keys.A:
-                    player.stopLeft();
-                    return true;
-
-                case Input.Keys.S:
-                    return true;
-
-                case Input.Keys.D:
-                    player.stopRight();
-                    return true;
-
-                case Input.Keys.UP:
-                    return true;
-
-                case Input.Keys.RIGHT:
-                    return true;
-
-                case Input.Keys.DOWN:
-                    return true;
-
-                case Input.Keys.LEFT:
-                    return true;
-
                 case Input.Keys.ESCAPE:
                     return true;
             }
@@ -84,20 +57,8 @@ public class GameScreen extends BaseScreen {
         @Override
         public boolean keyDown(int keycode) {
             switch (keycode) {
-                case Input.Keys.W:
-                    player.goesUp();
-                    return true;
-
-                case Input.Keys.A:
-                    player.goLeft();
-                    return true;
-
-                case Input.Keys.S:
-                    return true;
-
-                case Input.Keys.D:
-                    player.goRight();
-                    return true;
+                default:
+                    break;
             }
 
             return super.keyDown(keycode);

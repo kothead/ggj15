@@ -1,5 +1,6 @@
 package com.ggj15.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,7 +15,9 @@ public class Planet {
 
     private static final int DEFAULT_SIZE = 11;
     private static final int SAFE_SIDE_SIZE = 5;
-    private static final int BLOCK_SIZE = 64;
+    public static final int BLOCK_SIZE = 64;
+
+    private static final float DEFAULT_GRAVITY_FORCE = 4000f;
 
     public enum Block {
         ROCK, SOIL, GRASS;
@@ -35,9 +38,11 @@ public class Planet {
     private float minX, minY, maxX, maxY;
     private Block[][] tiles;
     private boolean[][] inked;
-    private Rectangle blockRect, intersectionRect;
+    private Rectangle objRect, blockRect, intersectionRect;
+    private float force;
 
     private Planet() {
+        objRect = new Rectangle();
         blockRect = new Rectangle();
         intersectionRect = new Rectangle();
     }
@@ -63,6 +68,14 @@ public class Planet {
         this.y = y;
     }
 
+    public float getForce(float x, float y) {
+        float centerX = this.x + width * BLOCK_SIZE / 2f;
+        float centerY = this.y + height * BLOCK_SIZE / 2f;
+        float diffX = centerX - x;
+        float diffY = centerY - y;
+        return DEFAULT_GRAVITY_FORCE / (float) Math.sqrt(diffX * diffX + diffY * diffY);
+    }
+
     public void draw(float delta, SpriteBatch batch) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -76,16 +89,16 @@ public class Planet {
     }
 
     public Block takeBlock(int x, int y) {
-        int idx = getIndex(x);
-        int idy = getIndex(y) + 1;
+        int idx = getHorizontalIndex(x);
+        int idy = getVerticalIndex(y) - 1;
         Block block = tiles[idy][idx];
         tiles[idy][idx] = null;
         return block;
     }
 
     public boolean putBlock(Block block, int x, int y) {
-        int idx = getIndex(x);
-        int idy = getIndex(y) + 1;
+        int idx = getHorizontalIndex(x);
+        int idy = getVerticalIndex(y);
         if (tiles[idy][idx] == null) {
             tiles[idy][idx] = block;
             return true;
@@ -96,24 +109,57 @@ public class Planet {
     /*
     TODO: change collision check. Do not iterate over all blocks. Choose wisely
      */
-    public float[] collide(Rectangle rect, float vx, float vy) {
+    public float[] collide(float x, float y, float width, float height, float dx, float dy) {
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                Block block = tiles[i][j];
+                if (block == null) continue;
+                float tileX = getX() + j * BLOCK_SIZE;
+                float tileY = getY() + i * BLOCK_SIZE;
+                blockRect.set(tileX, tileY, BLOCK_SIZE, BLOCK_SIZE);
+
+                objRect.set(x + dx, y, width, height);
+                if (Intersector.intersectRectangles(objRect, blockRect, intersectionRect)) {
+                    dx = Math.signum(dx) * (Math.abs(dx) - intersectionRect.getWidth() - 1);
+                }
+
+                objRect.set(x, y + dy, width, height);
+                if (Intersector.intersectRectangles(objRect, blockRect, intersectionRect)) {
+                    dy = Math.signum(dy) * (Math.abs(dy) - intersectionRect.getHeight() - 1);
+                }
+
+//                objRect.set(x + dx, y + dy, width, height);
+//                if (Intersector.intersectRectangles(objRect, blockRect, intersectionRect)) {
+//                    return new float[] {0, 0};
+//                }
+            }
+        }
+        return new float[] {dx, dy};
+    }
+
+    private int getHorizontalIndex(float x) {
+        return (int) ((x - this.x) / BLOCK_SIZE);
+    }
+
+    private int getVerticalIndex(float y) {
+        return (int) ((y - this.y) / BLOCK_SIZE);
+    }
+
+    private void calcLimits() {
+        minX = Integer.MAX_VALUE;
+        minY = Integer.MAX_VALUE;
+        maxX = Integer.MIN_VALUE;
+        maxY = Integer.MIN_VALUE;
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Block block = tiles[i][j];
-                if (block == null) continue;
-                blockRect.set(x + j * BLOCK_SIZE, y + i * BLOCK_SIZE, width, height);
-                if (Intersector.intersectRectangles(rect, blockRect, intersectionRect)) {
-                    return new float[] {0, 0};
-                }
+                if (tiles[i][j] == null) continue;
+                if (j < minX) minX = j;
+                if (i < minY) minY = i;
+                if (j > maxX) maxX = j;
+                if (j > maxY) maxY = i;
             }
         }
-        return new float[] {vx, vy};
-    }
-
-
-    private int getIndex(int component) {
-        return component / BLOCK_SIZE + SAFE_SIDE_SIZE;
     }
 
     public static class Builder {
@@ -127,16 +173,17 @@ public class Planet {
             instance = new Planet();
             instance.width = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.height = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
+            instance.force = DEFAULT_GRAVITY_FORCE;
             inkedCount = DEFAULT_INKED_COUNT;
         }
 
         public Builder width(int width) {
-            instance.width = width;
+            instance.width = width + SAFE_SIDE_SIZE * 2;
             return this;
         }
 
         public Builder height(int height) {
-            instance.height = height;
+            instance.height = height + SAFE_SIDE_SIZE * 2;
             return this;
         }
 
@@ -145,16 +192,22 @@ public class Planet {
             return this;
         }
 
+        public Builder force(float force) {
+            instance.force = force;
+            return this;
+        }
+
         public Planet build() {
             instance.tiles = new Block[instance.height][instance.width];
 
             // TODO: delete
-            for (int i = 0; i < instance.height; i++) {
-                for (int j = 0; j < instance.width; j++) {
+            for (int i = SAFE_SIDE_SIZE; i < instance.height - SAFE_SIDE_SIZE; i++) {
+                for (int j = SAFE_SIDE_SIZE; j < instance.width - SAFE_SIDE_SIZE; j++) {
                     instance.tiles[i][j] = Block.ROCK;
                 }
             }
 
+            instance.calcLimits();
             return instance;
         }
     }
