@@ -34,7 +34,7 @@ public abstract class BaseScreen extends ScreenAdapter {
         viewport = new StretchViewport(worldWidth, worldHeight, camera);
 
         batch = new SpriteBatch();
-        stage = new Stage(getViewport());
+        stage = new Stage(new StretchViewport(getWorldWidth() / 2, getWorldHeight() / 2));
         shapes = new ShapeRenderer();
     }
 

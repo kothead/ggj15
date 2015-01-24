@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
-import com.ggj15.screen.GameScreen;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -74,10 +74,18 @@ public class Player extends Sprite {
         dy = ds[1];
         setX(getX() + dx);
         setY(getY() + dy);
+
+        setRotation();
     }
 
     @Override
     public void draw(Batch batch) {
+        super.draw(batch);
+        batch.draw(this, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
+                getHeight(), getScaleX(), getScaleY(), getRotation());
+    }
+
+    private void setRotation() {
         switch (gravity) {
             case DOWN:
                 setRotation(0);
@@ -95,10 +103,6 @@ public class Player extends Sprite {
                 setRotation(90);
                 break;
         }
-
-        super.draw(batch);
-        batch.draw(this, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
-                getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     private void startFly() {
@@ -166,12 +170,34 @@ public class Player extends Sprite {
 
     private class PlayerActor extends Actor {
 
+        private TextureRegion textureRegion;
+
+        public PlayerActor() {
+            textureRegion = ImageCache.getTexture("octopus-icon");
+            setSize(Player.this.getWidth() * Configuration.scaleFactorX,
+                    Player.this.getHeight() * Configuration.scaleFactorY);
+            setOriginCenter();
+        }
+
         @Override
         public void draw(Batch batch, float parentAlpha) {
+            setRotation(Player.this.getRotation());
             super.draw(batch, parentAlpha);
-            batch.draw(getTexture(),
-                 Player.this.getX() * GameScreen.scaleFactorX,
-                 getStage().getHeight() - Player.this.getY() * GameScreen.scaleFactorY - Player.this.getHeight());
+            float x = Player.this.getX() * Configuration.scaleFactorX;
+            float y = Player.this.getY() * Configuration.scaleFactorY;
+            if (gravity == Direction.RIGHT)
+                x += getWidth();
+            if (gravity == Direction.UP)
+                y += getHeight();
+            batch.draw(textureRegion,
+                 x, y,
+                 getOriginX(),
+                 getOriginY(),
+                 getWidth(),
+                 getHeight(),
+                 getScaleX(),
+                 getScaleY(),
+                 getRotation());
         }
     }
 }

@@ -6,147 +6,175 @@ filter: Nearest,Nearest
 repeat: none
 CharJump-01
   rotate: false
-  xy: 2, 202
+  xy: 1934, 850
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: -1
+black-hole-index
+  rotate: false
+  xy: 2, 270
+  size: 360, 64
+  orig: 360, 64
+  offset: 0, 0
+  index: -1
 char-fly
   rotate: false
-  xy: 2, 70
+  xy: 1934, 718
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 1
 char-fly
   rotate: false
-  xy: 70, 202
+  xy: 70, 70
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 2
 char-fly-3
   rotate: false
-  xy: 1934, 846
+  xy: 2, 70
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: -1
 char-hold-jump
   rotate: false
-  xy: 1934, 778
+  xy: 366, 202
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 char-hold-stand
   rotate: false
-  xy: 2, 2
+  xy: 730, 270
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 char-hold-walk
   rotate: false
-  xy: 70, 134
+  xy: 2, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 char-hold-walk
   rotate: false
-  xy: 138, 266
+  xy: 1934, 650
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-stand
   rotate: false
-  xy: 1934, 710
+  xy: 138, 134
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 char-stand
   rotate: false
-  xy: 70, 66
+  xy: 434, 202
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-suck
   rotate: false
-  xy: 138, 198
+  xy: 798, 270
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 char-walking
   rotate: false
-  xy: 206, 266
+  xy: 70, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 char-walking
   rotate: false
-  xy: 1934, 642
+  xy: 1934, 582
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-walking
   rotate: false
-  xy: 138, 130
+  xy: 138, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 char_walking
   rotate: false
-  xy: 206, 198
+  xy: 206, 134
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 grass
   rotate: false
-  xy: 274, 266
+  xy: 502, 202
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ink-index
+  rotate: false
+  xy: 2, 202
+  size: 360, 64
+  orig: 360, 64
+  offset: 0, 0
+  index: -1
+ink-index-mask
+  rotate: false
+  xy: 366, 270
+  size: 360, 64
+  orig: 360, 64
+  offset: 0, 0
+  index: -1
+octopus-icon
+  rotate: false
+  xy: 866, 270
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 rock
   rotate: false
-  xy: 1934, 574
+  xy: 1934, 514
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sky
   rotate: false
-  xy: 2, 334
+  xy: 2, 338
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 1
 sky
   rotate: false
-  xy: 646, 334
+  xy: 646, 338
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 2
 sky
   rotate: false
-  xy: 1290, 334
+  xy: 1290, 338
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 3
 terra
   rotate: false
-  xy: 206, 130
+  xy: 206, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

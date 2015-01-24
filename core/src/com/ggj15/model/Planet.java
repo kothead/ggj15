@@ -8,8 +8,11 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
+import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
-import com.ggj15.screen.GameScreen;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
  * Created by st on 1/24/15.
@@ -22,9 +25,17 @@ public class Planet {
 
     private static final float DEFAULT_GRAVITY_FORCE = 4000f;
 
-    private PlanetActor actor;
+    public PlanetActor actor;
 
     public PlanetActor getActor() {
+        actor.addAction(sequence(alpha(0), fadeIn(3f), new RunnableAction() {
+                    @Override
+                    public boolean act(float delta) {
+                        Gdx.app.log("Test:", "lastAction");
+                        return true;
+                    }
+                }, moveBy(60, 60)
+        ));
         return actor;
     }
 
@@ -274,21 +285,24 @@ public class Planet {
         }
     }
 
-    private class PlanetActor extends Actor {
+    public class PlanetActor extends Actor {
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
-            Gdx.app.log("Test:", "height " + (Planet.this.getHeight() * GameScreen.scaleFactorY));
-            Gdx.app.log("Test:", "planet heiht " + height);
+            float width = Planet.this.getCleanWidth() * Configuration.scaleFactorX;
+            float height = Planet.this.getCleanHeight() * Configuration.scaleFactorY;
             batch.draw(ImageCache.getTexture("rock"),
-                    getStage().getWidth() - Planet.this.getWidth() * GameScreen.scaleFactorX,
-                    getStage().getHeight() - Planet.this.getCleanHeight() * GameScreen.scaleFactorY,
-                   /* Planet.this.x * GameScreen.scaleFactorX,
-                    getStage().getHeight() - Planet.this.y * GameScreen.scaleFactorY - Planet.this.getCleanHeight() * GameScreen.scaleFactorY,
-*/                    Planet.this.getCleanWidth() * GameScreen.scaleFactorX,
-                    Planet.this.getCleanHeight() * GameScreen.scaleFactorY);
+                    (Planet.this.x + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorX,
+                    (Planet.this.y + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorY,
+                    width, height);
         }
+
+        @Override
+        public void act(float delta) {
+            super.act(delta);
+        }
+
     }
 
     private float getCleanHeight() {
