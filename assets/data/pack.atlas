@@ -1,26 +1,47 @@
 
 pack.png
-size: 256,128
+size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 grass
   rotate: false
-  xy: 2, 2
+  xy: 2, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 rock
   rotate: false
-  xy: 70, 2
+  xy: 1934, 714
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
+sky
+  rotate: false
+  xy: 2, 138
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 1
+sky
+  rotate: false
+  xy: 646, 138
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 2
+sky
+  rotate: false
+  xy: 1290, 138
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 3
 terra
   rotate: false
-  xy: 138, 2
+  xy: 2, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

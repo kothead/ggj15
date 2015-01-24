@@ -31,8 +31,8 @@ public class DesktopLauncher {
 		};
 
 		TexturePacker.Settings settings = new TexturePacker.Settings();
-		settings.maxWidth = 1024;
-		settings.maxHeight = 1024;
+		settings.maxWidth = 2048;
+		settings.maxHeight = 2048;
 		settings.edgePadding = true;
 		settings.duplicatePadding = true;
 		settings.paddingX = 4;

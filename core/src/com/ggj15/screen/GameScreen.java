@@ -8,9 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
-import com.ggj15.model.Hole;
-import com.ggj15.model.Planet;
-import com.ggj15.model.Player;
+import com.ggj15.model.*;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -21,10 +19,11 @@ public class GameScreen extends BaseScreen {
     private Player player;
     private Planet planet;
     private Hole hole;
+    private Background background;
 
     private Array<Planet> planets = new Array<Planet>();
 
-    boolean mapMode = true;
+    boolean mapMode = false;
 
     private Stage stage;
 
@@ -42,6 +41,8 @@ public class GameScreen extends BaseScreen {
 
         scaleFactorX = stage.getWidth() / world_max_width;
         scaleFactorY = stage.getHeight() / world_max_height;
+
+        background= new Background((int) getWorldWidth(), (int) getWorldHeight());
 
         player = new Player();
         stage.addActor(player.getActor());
@@ -82,6 +83,8 @@ public class GameScreen extends BaseScreen {
         hole.process(delta);
 
         batch().begin();
+        background.setPosition(player.getX() - getWorldWidth() / 2, player.getY() - getWorldHeight() / 2);
+        background.draw(batch(), 0, 0);
         player.draw(delta, batch());
         planet.draw(delta, batch());
         hole.draw(delta, batch());
@@ -115,6 +118,10 @@ public class GameScreen extends BaseScreen {
         @Override
         public boolean keyDown(int keycode) {
             switch (keycode) {
+                case Input.Keys.M:
+                    mapMode = !mapMode;
+                    break;
+
                 default:
                     break;
             }
