@@ -4,44 +4,149 @@ size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-grass
+CharJump-01
+  rotate: false
+  xy: 2, 202
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+char-fly
   rotate: false
   xy: 2, 70
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 1
+char-fly
+  rotate: false
+  xy: 70, 202
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
+char-fly-3
+  rotate: false
+  xy: 1934, 846
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+char-hold-jump
+  rotate: false
+  xy: 1934, 778
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+char-hold-stand
+  rotate: false
+  xy: 2, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+char-hold-walk
+  rotate: false
+  xy: 70, 134
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+char-hold-walk
+  rotate: false
+  xy: 138, 266
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+char-stand
+  rotate: false
+  xy: 1934, 710
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+char-stand
+  rotate: false
+  xy: 70, 66
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+char-suck
+  rotate: false
+  xy: 138, 198
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+char-walking
+  rotate: false
+  xy: 206, 266
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+char-walking
+  rotate: false
+  xy: 1934, 642
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+char-walking
+  rotate: false
+  xy: 138, 130
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+char_walking
+  rotate: false
+  xy: 206, 198
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 4
+grass
+  rotate: false
+  xy: 274, 266
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 rock
   rotate: false
-  xy: 1934, 714
+  xy: 1934, 574
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sky
   rotate: false
-  xy: 2, 138
+  xy: 2, 334
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 1
 sky
   rotate: false
-  xy: 646, 138
+  xy: 646, 334
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 2
 sky
   rotate: false
-  xy: 1290, 138
+  xy: 1290, 334
   size: 640, 640
   orig: 640, 640
   offset: 0, 0
   index: 3
 terra
   rotate: false
-  xy: 2, 2
+  xy: 206, 130
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

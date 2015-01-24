@@ -94,7 +94,7 @@ public class GameScreen extends BaseScreen {
         batch().begin();
         background.setPosition(player.getX() - getWorldWidth() / 2, player.getY() - getWorldHeight() / 2);
         background.draw(batch(), 0, 0);
-        player.draw(delta, batch());
+        player.draw(batch());
         planet.draw(delta, batch());
         hole.draw(delta, batch());
         batch().end();
