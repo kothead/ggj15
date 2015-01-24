@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.ggj15.data.ImageCache;
 import com.ggj15.data.SkinCache;
 import com.ggj15.data.SoundCache;
+import com.ggj15.screen.FinalScreen;
 import com.ggj15.screen.GameScreen;
+import com.ggj15.screen.MenuScreen;
 
 public class GGJGame extends Game {
 	SpriteBatch batch;
@@ -20,10 +22,10 @@ public class GGJGame extends Game {
 		SoundCache.load();
 		SkinCache.load();
 
-        setGameScreen();
+        setMenuScreen();
 	}
 
-	@Override
+    @Override
 	public void setScreen(Screen screen) {
 		Screen old = getScreen();
 		super.setScreen(screen);
@@ -35,8 +37,16 @@ public class GGJGame extends Game {
         super.render();
 	}
 
-    public void setGameScreen(){
-        setScreen(new GameScreen(this));
+    public void setMenuScreen() {
+        setScreen(new MenuScreen(this));
+    }
+
+    public void setGameScreen(long seed){
+        setScreen(new GameScreen(this, seed));
+    }
+
+    public void setFinalScreen(boolean win) {
+        setScreen(new FinalScreen(this, win));
     }
 
     public float getScaleFactor() {

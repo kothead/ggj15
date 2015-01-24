@@ -32,10 +32,13 @@ public class GameScreen extends BaseScreen {
 
     private Stage mapStage;
 
-    public GameScreen(GGJGame game) {
+    private long seed;
+
+    public GameScreen(GGJGame game, long seed) {
         super(game);
 
         this.game = game;
+        this.seed = seed;
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
 
@@ -130,6 +133,7 @@ public class GameScreen extends BaseScreen {
         public boolean keyUp(int keycode) {
             switch (keycode) {
                 case Input.Keys.ESCAPE:
+                    game.setMenuScreen();
                     return true;
             }
 

@@ -123,6 +123,13 @@ grass
   orig: 64, 64
   offset: 0, 0
   index: -1
+ink
+  rotate: false
+  xy: 866, 270
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 ink-index
   rotate: false
   xy: 2, 202
@@ -139,14 +146,14 @@ ink-index-mask
   index: -1
 octopus-icon
   rotate: false
-  xy: 866, 270
+  xy: 1934, 514
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 rock
   rotate: false
-  xy: 1934, 514
+  xy: 206, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -174,7 +181,7 @@ sky
   index: 3
 terra
   rotate: false
-  xy: 206, 66
+  xy: 274, 134
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
