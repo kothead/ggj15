@@ -1,9 +1,7 @@
 package com.ggj15;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.ggj15.data.ImageCache;
@@ -14,8 +12,9 @@ import com.ggj15.screen.GameScreen;
 public class GGJGame extends Game {
 	SpriteBatch batch;
 	Texture img;
+    private float scaleFactor;
 
-	@Override
+    @Override
 	public void create () {
 		ImageCache.load();
 		SoundCache.load();
@@ -38,5 +37,9 @@ public class GGJGame extends Game {
 
     public void setGameScreen(){
         setScreen(new GameScreen(this));
+    }
+
+    public float getScaleFactor() {
+        return scaleFactor;
     }
 }

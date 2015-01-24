@@ -2,9 +2,12 @@ package com.ggj15.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.ImageCache;
+import com.ggj15.screen.GameScreen;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -23,10 +26,14 @@ public class Player extends Sprite {
     private Direction gravity = Direction.DOWN;
     private Planet.Block block;
 
+    private PlayerActor actor;
+
     public Player() {
         setRegion(ImageCache.getTexture(GRASS));
         setX(50);
         setY(500);
+
+        actor = new PlayerActor();
     }
 
     public void process(float delta, Planet planet) {
@@ -132,5 +139,20 @@ public class Player extends Sprite {
 
     private int getCenterY() {
         return (int) (getY() + getRegionHeight() / 2f);
+    }
+
+    public PlayerActor getActor() {
+        return actor;
+    }
+
+    private class PlayerActor extends Actor {
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            super.draw(batch, parentAlpha);
+            batch.draw(getTexture(),
+                 Player.this.getX() * GameScreen.scaleFactorX,
+                 getStage().getHeight() - Player.this.getY() * GameScreen.scaleFactorY - Player.this.getHeight());
+        }
     }
 }

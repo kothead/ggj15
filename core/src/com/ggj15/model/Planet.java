@@ -1,11 +1,15 @@
 package com.ggj15.model;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.ImageCache;
+import com.ggj15.screen.GameScreen;
 
 /**
  * Created by st on 1/24/15.
@@ -17,6 +21,12 @@ public class Planet {
     public static final int BLOCK_SIZE = 64;
 
     private static final float DEFAULT_GRAVITY_FORCE = 4000f;
+
+    private PlanetActor actor;
+
+    public PlanetActor getActor() {
+        return actor;
+    }
 
     public enum Block {
         ROCK, SOIL, GRASS;
@@ -45,6 +55,7 @@ public class Planet {
         blockRect = new Rectangle();
         intersectionRect = new Rectangle();
         planetRectangle = new Rectangle();
+        actor = new PlanetActor();
     }
 
     public int getWidth() {
@@ -261,5 +272,28 @@ public class Planet {
             instance.calcLimits();
             return instance;
         }
+    }
+
+    private class PlanetActor extends Actor {
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            super.draw(batch, parentAlpha);
+            Gdx.app.log("Test:", "height " + (Planet.this.getHeight() * GameScreen.scaleFactorY));
+            Gdx.app.log("Test:", "planet heiht " + height);
+            batch.draw(ImageCache.getTexture("rock"),
+                    Planet.this.x * GameScreen.scaleFactorX,
+                    getStage().getHeight() - Planet.this.y * GameScreen.scaleFactorY - Planet.this.getCleanHeight() * GameScreen.scaleFactorY,
+                    Planet.this.getCleanWidth() * GameScreen.scaleFactorX,
+                    Planet.this.getCleanHeight() * GameScreen.scaleFactorY);
+        }
+    }
+
+    private float getCleanHeight() {
+        return getHeight() - BLOCK_SIZE * 2 * SAFE_SIDE_SIZE;
+    }
+
+    private float getCleanWidth() {
+        return getWidth() - BLOCK_SIZE * 2 * SAFE_SIDE_SIZE;
     }
 }

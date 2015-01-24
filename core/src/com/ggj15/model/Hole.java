@@ -1,5 +1,6 @@
 package com.ggj15.model;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -7,7 +8,10 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.ggj15.data.ImageCache;
+import com.ggj15.screen.GameScreen;
 
 import java.util.Iterator;
 
@@ -30,10 +34,12 @@ public class Hole extends Sprite {
     Rectangle forceRectangle = new Rectangle();
     Rectangle tmpRectangle = new Rectangle();
 
+    PlanetActor actor;
+
     public Hole(Array<Planet> planets) {
         super();
         this.planets = planets;
-        center = new Vector2(1020, 20);
+        center = new Vector2(1500, 600);
 
         setX(center.x - getWidth() / 2);
         setY(center.y - getHeight() / 2);
@@ -42,6 +48,9 @@ public class Hole extends Sprite {
         forceRectangle.setY(getY() - DEFAULT_GRAVITY_DIST);
         forceRectangle.setWidth(getWidth() + 2 * DEFAULT_GRAVITY_DIST);
         forceRectangle.setHeight(getHeight() + 2 * DEFAULT_GRAVITY_DIST);
+
+        setRegion(ImageCache.getTexture("terra"));
+        actor = new PlanetActor();
     }
 
     public void draw(ShapeRenderer shapeRenderer, float delta) {
@@ -99,6 +108,22 @@ public class Hole extends Sprite {
             float diff = (float) Math.sqrt(Math.pow(currentPoint.x - center.x, 2) + Math.pow(currentPoint.y - center.y, 2));
             currentPoint.x = currentPoint.x + BLOCK_SPEED / diff * (center.x - currentPoint.x);
             currentPoint.y = currentPoint.y + BLOCK_SPEED / diff * (center.y - currentPoint.y);
+        }
+    }
+
+    public PlanetActor getActor() {
+        return actor;
+    }
+
+    private class PlanetActor extends Actor {
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            super.draw(batch, parentAlpha);
+            batch.draw(Hole.this, Hole.this.getX()* GameScreen.scaleFactorX,
+                    getStage().getHeight() - Hole.this.getY() * GameScreen.scaleFactorY - Hole.this.getHeight() * GameScreen.scaleFactorY,
+                    Hole.this.getWidth() * GameScreen.scaleFactorX,
+                    Hole.this.getHeight() * GameScreen.scaleFactorY);
         }
     }
 }
