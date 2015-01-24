@@ -1,11 +1,10 @@
 package com.ggj15.model;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.ggj15.data.ImageCache;
 
 /**
@@ -38,13 +37,14 @@ public class Planet {
     private float minX, minY, maxX, maxY;
     private Block[][] tiles;
     private boolean[][] inked;
-    private Rectangle objRect, blockRect, intersectionRect;
+    private Rectangle objRect, blockRect, intersectionRect, planetRectangle;
     private float force;
 
     private Planet() {
         objRect = new Rectangle();
         blockRect = new Rectangle();
         intersectionRect = new Rectangle();
+        planetRectangle = new Rectangle();
     }
 
     public int getWidth() {
@@ -66,6 +66,14 @@ public class Planet {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Rectangle getRectangle() {
+        planetRectangle.setX(this.x);
+        planetRectangle.setY(this.y);
+        planetRectangle.setWidth(width * BLOCK_SIZE);
+        planetRectangle.setHeight(height * BLOCK_SIZE);
+        return planetRectangle;
     }
 
     public float getForce(float x, float y) {
@@ -97,6 +105,21 @@ public class Planet {
             calcLimits();
         }
         return block;
+    }
+
+    public Block takeBlock(float x, float y) {
+        int idx = getHorizontalIndex(x);
+        int idy = getVerticalIndex(y);
+        Block block = tiles[idy][idx];
+        if (block != null) {
+            tiles[idy][idx] = null;
+            calcLimits();
+        }
+        return block;
+    }
+
+    public Vector2 getBlockCoordinates(float x, float y) {
+        return new Vector2(getHorizontalIndex(x) * BLOCK_SIZE + this.x, getVerticalIndex(y) * BLOCK_SIZE + this.y);
     }
 
     public boolean putBlock(Block block, int x, int y) {
