@@ -5,15 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
 import com.ggj15.data.Configuration;
 import com.ggj15.model.*;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -33,9 +30,12 @@ public class GameScreen extends BaseScreen {
 
     private Stage mapStage;
 
-    public GameScreen(GGJGame game) {
+    private long seed;
+
+    public GameScreen(GGJGame game, long seed) {
         super(game);
         this.game = game;
+        this.seed = seed;
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
 
@@ -137,6 +137,7 @@ public class GameScreen extends BaseScreen {
         public boolean keyUp(int keycode) {
             switch (keycode) {
                 case Input.Keys.ESCAPE:
+                    game.setMenuScreen();
                     return true;
             }
 
@@ -148,17 +149,6 @@ public class GameScreen extends BaseScreen {
             switch (keycode) {
                 case Input.Keys.M:
                     mapMode = !mapMode;
-                    if (mapMode) {
-                        Gdx.app.log("Test:", "animation is called");
-                        mapStage.addAction(sequence(alpha(0), fadeIn(3f), new RunnableAction() {
-                                    @Override
-                                    public boolean act(float delta) {
-                                        Gdx.app.log("Test:", "lastAction");
-                                        return true;
-                                    }
-                                }
-                        ));
-                    }
                     break;
 
                 default:

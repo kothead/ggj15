@@ -1,19 +1,14 @@
 package com.ggj15.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 import java.util.Random;
 
@@ -31,14 +26,6 @@ public class Planet {
     public PlanetActor actor;
 
     public PlanetActor getActor() {
-        actor.addAction(sequence(alpha(0), fadeIn(3f), new RunnableAction() {
-                    @Override
-                    public boolean act(float delta) {
-                        Gdx.app.log("Test:", "lastAction");
-                        return true;
-                    }
-                }, moveBy(60, 60)
-        ));
         return actor;
     }
 
