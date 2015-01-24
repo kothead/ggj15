@@ -22,8 +22,9 @@ public class GameScreen extends BaseScreen {
 
     private GGJGame game;
     private Player player;
-    private Planet planet;
+
     private Hole hole;
+    private PlanetController planetController;
     private Background background;
 
     private Array<Planet> planets = new Array<Planet>();
@@ -34,6 +35,7 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(GGJGame game) {
         super(game);
+        Planet planet;
 
         this.game = game;
 
@@ -51,11 +53,21 @@ public class GameScreen extends BaseScreen {
         planet = new Planet.Builder().width(11).height(11).build();
         planet.setPosition(50, 50);
         planets.add(planet);
+
+        for (int i = 1; i < 4; i++) {
+            planet = new Planet.Builder().width(7+i).height(7+i).build();
+            planet.setPosition(-900*i, 50);
+            planets.add(planet);
+        }
+
         mapStage.addActor(planet.getActor());
         mapStage.addActor(player.getActor());
 
         hole = new Hole(planets);
         mapStage.addActor(hole.getActor());
+
+        planetController = new PlanetController(planets);
+
 
         Table table = new Table();
         table.setFillParent(true);
@@ -86,7 +98,9 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
 
-        player.process(delta, planet);
+        for(Planet planet: planets){
+            player.process(delta, planet);
+        }
 
         Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -103,7 +117,10 @@ public class GameScreen extends BaseScreen {
         background.draw(batch(), 0, 0);
         if (!mapMode) {
             player.draw(batch());
-            planet.draw(delta, batch());
+            for(Planet planet: planets){
+                planet.draw(delta, batch());
+            }
+
             hole.draw(delta, batch());
         }
         batch().end();

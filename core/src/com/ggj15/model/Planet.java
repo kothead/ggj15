@@ -238,6 +238,12 @@ public class Planet {
         }
     }
 
+    private static Random random = new Random();
+
+    static{
+        random.setSeed(654654L);
+    }
+
     public static class Builder {
 
         private static final int DEFAULT_INKED_COUNT = 10;
@@ -246,12 +252,6 @@ public class Planet {
         private Planet instance;
         private int inkedCount;
         private PlanetType planetType;
-
-        private Random random = new Random();
-
-        {
-            random.setSeed(654654L);
-        }
 
         public Builder() {
             instance = new Planet();
