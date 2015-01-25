@@ -74,6 +74,7 @@ public class GameScreen extends BaseScreen {
         Planet lastPlanet = planets.get(0);
         rocket.setX(MathUtils.random(lastPlanet.getCleanX(),lastPlanet.getCleanX() + lastPlanet.getCleanWidth()));
         rocket.setY(lastPlanet.getCleanY() + lastPlanet.getCleanHeight());
+        mapStage.addActor(rocket.getActor());
 
         mapStage.addActor(player.getActor());
 

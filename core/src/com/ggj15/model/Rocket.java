@@ -1,5 +1,6 @@
 package com.ggj15.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,7 +26,11 @@ public class Rocket extends Sprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-        batch.draw(this, getX(), getY());
+        batch.draw(Rocket.this, getX(), getY());
+    }
+
+    public RocketActor getActor() {
+        return actor;
     }
 
     public  class RocketActor extends Actor {
@@ -34,14 +39,17 @@ public class Rocket extends Sprite {
 
         public RocketActor() {
             textureRegion = ImageCache.getTexture("char-fly");
-            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
-            setOrigin(textureRegion.getRegionWidth() / 2f,
-                    textureRegion.getRegionHeight() / 2f);
+//            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+//            setOrigin(textureRegion.getRegionWidth() / 2f,
+//                    textureRegion.getRegionHeight() / 2f);
         }
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
+
+            float x = Rocket.this.getX() * Configuration.scaleFactorX;
+            float y = Rocket.this.getY() * Configuration.scaleFactorY;
 
             float offsetX = getStage().getWidth() / 2f;
             float offsetY = getStage().getHeight() / 2f;
@@ -49,10 +57,10 @@ public class Rocket extends Sprite {
             float width = Rocket.this.getWidth() * Configuration.scaleFactorX;
             float height = Rocket.this.getHeight() * Configuration.scaleFactorY;
 
-//            batch.draw(ImageCache.getTexture("rock"),
-//                    Rocket.this.getX() * Configuration.scaleFactorX + offsetX,
-//                    Rocket.this.getY() * Configuration.scaleFactorY + offsetY,
-//                    width, height);
+            Gdx.app.log("Test", "draw rocket on map");
+            batch.draw(textureRegion,
+                    x + offsetX, y + offsetY,
+                    width, height);
         }
     }
 }
