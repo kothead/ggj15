@@ -280,9 +280,9 @@ public class Player extends Sprite {
                     block = planet.takeBlock(gravity, getCenterX(), getCenterY());
                 }
             } else {
-                Gdx.app.log("test", "trying to put block");
+//                Gdx.app.log("test", "trying to put block");
                 boolean success = planet.putBlock(block, getCenterX(), getCenterY());
-                Gdx.app.log("test", "success: " + success);
+//                Gdx.app.log("test", "success: " + success);
                 if (!success) return;
                 if (gravity == Direction.DOWN) {
                     setY(getY() + Planet.BLOCK_SIZE);

@@ -8,11 +8,15 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
 import com.ggj15.data.Configuration;
+import com.ggj15.data.Messages;
+import com.ggj15.data.SkinCache;
 import com.ggj15.model.*;
 
 import java.util.Random;
@@ -21,6 +25,10 @@ import java.util.Random;
  * Created by kettricken on 24.01.2015.
  */
 public class GameScreen extends BaseScreen {
+
+    private static final String MESSAGE_STYLE = "message";
+    private static final int SEED_WITH_HELP = 100;
+    private static final int MESSAGE_PADDING = 20;
 
     private GGJGame game;
     private Player player;
@@ -37,8 +45,11 @@ public class GameScreen extends BaseScreen {
     boolean mapMode = false;
 
     private Stage mapStage;
-
     private long seed;
+
+    private boolean hasHelp;
+    private Label helpLabel;
+    private Messages messages;
 
     public static Random random = new Random();
 
@@ -48,6 +59,7 @@ public class GameScreen extends BaseScreen {
         super(game);
         this.game = game;
         this.seed = seed;
+        hasHelp = seed == SEED_WITH_HELP;
         random.setSeed(seed);
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
@@ -98,6 +110,14 @@ public class GameScreen extends BaseScreen {
 
         Gdx.input.setInputProcessor(new Processor());
 
+        if (hasHelp) {
+            Skin skin = SkinCache.getDefaultSkin();
+
+            helpLabel = new Label(null, skin, MESSAGE_STYLE);
+            stage().addActor(helpLabel);
+            messages = new Messages(helpLabel);
+            messages.setMessage(Messages.START_TUTORIAL);
+        }
     }
 
     @Override
@@ -139,7 +159,6 @@ public class GameScreen extends BaseScreen {
         float diff = (float) Math.sqrt(Math.pow(player.getX() - hole.getCenter().x, 2) +
                 Math.pow(player.getY() - hole.getCenter().y, 2));
         diff -= hole.getWidth() / 2;
-        Gdx.app.log("dist", "d " + diff);
         holeIndicator.updateHoleDistance(diff);
 
 
@@ -164,6 +183,7 @@ public class GameScreen extends BaseScreen {
             mapStage.draw();
         }
 
+        if (hasHelp) messages.process(delta);
         stage().act();
         stage().draw();
     }

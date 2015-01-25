@@ -181,11 +181,11 @@ public class Planet {
                 Math.abs(y-uBound),
                 Math.abs(y-bBound)
         };
-
-        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
-        Gdx.app.log("111", x + " " + y);
-        Gdx.app.log("111", Arrays.toString(distances));
-
+//
+//        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
+//        Gdx.app.log("111", x + " " + y);
+//        Gdx.app.log("111", Arrays.toString(distances));
+//
         float distance = speed*delta;
 
         OrbitDirection orbitDirection = null;
@@ -279,7 +279,7 @@ public class Planet {
     public Block takeBlock(float x, float y) {
         int idx = getHorizontalIndex(x);
         int idy = getVerticalIndex(y);
-        if(idy > tiles.length || idy < 0 || idx <0 || idx > tiles[0].length){
+        if(idy >= height || idy < 0 || idx <0 || idx >= width){
             return null;
         }
         Block block = tiles[idy][idx];
