@@ -15,7 +15,7 @@ public class Rocket extends Sprite {
     private RocketActor actor;
 
     public Rocket() {
-        setRegion(ImageCache.getTexture("rock"));
+        setRegion(ImageCache.getTexture("rocket"));
         setSize(getRegionWidth(), getRegionHeight());
         setOrigin(getRegionWidth() / 2f, getRegionHeight() / 2f);
 
@@ -25,7 +25,11 @@ public class Rocket extends Sprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-        batch.draw(this, getX(), getY());
+        batch.draw(Rocket.this, getX(), getY());
+    }
+
+    public RocketActor getActor() {
+        return actor;
     }
 
     public  class RocketActor extends Actor {
@@ -33,26 +37,22 @@ public class Rocket extends Sprite {
         private TextureRegion textureRegion;
 
         public RocketActor() {
-            textureRegion = ImageCache.getTexture("char-fly");
-            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
-            setOrigin(textureRegion.getRegionWidth() / 2f,
-                    textureRegion.getRegionHeight() / 2f);
+            textureRegion = ImageCache.getTexture("rocket-on-map");
         }
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
 
+            float x = Rocket.this.getX() * Configuration.scaleFactorX;
+            float y = Rocket.this.getY() * Configuration.scaleFactorY;
+
             float offsetX = getStage().getWidth() / 2f;
             float offsetY = getStage().getHeight() / 2f;
 
-            float width = Rocket.this.getWidth() * Configuration.scaleFactorX;
-            float height = Rocket.this.getHeight() * Configuration.scaleFactorY;
-
-//            batch.draw(ImageCache.getTexture("rock"),
-//                    Rocket.this.getX() * Configuration.scaleFactorX + offsetX,
-//                    Rocket.this.getY() * Configuration.scaleFactorY + offsetY,
-//                    width, height);
+            batch.draw(textureRegion,
+                    x + offsetX, y + offsetY,
+                    textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         }
     }
 }

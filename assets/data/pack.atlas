@@ -62,7 +62,7 @@ char-hold-walk
   index: 1
 char-hold-walk
   rotate: false
-  xy: 1934, 685
+  xy: 1934, 553
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -97,7 +97,7 @@ char-suck
   index: -1
 char-walking
   rotate: false
-  xy: 1934, 617
+  xy: 1934, 485
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -125,7 +125,7 @@ char-walking
   index: 4
 grass
   rotate: false
-  xy: 1934, 549
+  xy: 1934, 417
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -165,9 +165,37 @@ octopus-icon
   orig: 64, 64
   offset: 0, 0
   index: -1
+planet-on-map
+  rotate: false
+  xy: 638, 237
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+planet-on-map-square
+  rotate: false
+  xy: 1002, 305
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 rock
   rotate: false
-  xy: 1934, 481
+  xy: 706, 237
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+rocket
+  rotate: false
+  xy: 1934, 621
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+rocket-on-map
+  rotate: false
+  xy: 1070, 305
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -195,7 +223,7 @@ sky
   index: 3
 terra
   rotate: false
-  xy: 638, 237
+  xy: 774, 237
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
