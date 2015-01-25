@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class ImageCache {
 
-    private static final String DATA_DIR = "assets/data/";
+    private static final String DATA_DIR = "data/";
     private static final String DATA_FILE = "pack.atlas";
     
     private static TextureAtlas atlas;

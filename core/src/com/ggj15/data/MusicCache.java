@@ -10,7 +10,7 @@ public class MusicCache {
 
     public static final String TYNC = "tync";
 
-    private static final String MUSIC_DIR = "assets/audio/music/";
+    private static final String MUSIC_DIR = "audio/music/";
     private static final String MUSIC_EXT = ".mp3";
     private static final float VOLUME = 1f;
 

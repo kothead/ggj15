@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.ObjectMap;
  */
 public class SoundCache {
 
-    private static final String SOUND_DIR = "assets/audio/sound/";
+    private static final String SOUND_DIR = "audio/sound/";
     private static final String SOUND_EXT = ".wav";
 
     private static ObjectMap<String, Sound> sounds;

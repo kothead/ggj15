@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
  */
 public class SkinCache {
 
-    private static final String SKIN_DIR = "assets/data/";
+    private static final String SKIN_DIR = "data/";
     private static final String SKIN_FILE = "uiskin.json";
 
     private static Skin skin;
