@@ -279,6 +279,9 @@ public class Planet {
     public Block takeBlock(float x, float y) {
         int idx = getHorizontalIndex(x);
         int idy = getVerticalIndex(y);
+        if(idy > tiles.length || idy < 0 || idx <0 || idx > tiles[0].length){
+            return null;
+        }
         Block block = tiles[idy][idx];
         if (block != null) {
             tiles[idy][idx] = null;
@@ -573,11 +576,19 @@ public class Planet {
 
     }
 
-    private float getCleanHeight() {
+    public float getCleanHeight() {
         return getHeight() - BLOCK_SIZE * 2 * SAFE_SIDE_SIZE;
     }
 
-    private float getCleanWidth() {
+    public float getCleanWidth() {
         return getWidth() - BLOCK_SIZE * 2 * SAFE_SIDE_SIZE;
+    }
+
+    public float getCleanX() {
+        return x + BLOCK_SIZE * SAFE_SIDE_SIZE;
+    }
+
+    public  float getCleanY() {
+        return y + BLOCK_SIZE * SAFE_SIDE_SIZE;
     }
 }
