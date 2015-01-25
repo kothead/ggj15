@@ -36,7 +36,7 @@ public class Planet {
     private static final float DEFAULT_GRAVITY_FORCE = 40000f;
     private static final float DEFAULT_SPEED = 300f;
     private static final float DEFAULT_ORBIT_RADIUS = 1200f;
-    private static final Vector2 SYSTEM_CENTER = new Vector2(Configuration.worldMaxWidth / 2, Configuration.worldMaxHeight / 2);
+    private static final Vector2 SYSTEM_CENTER = new Vector2(0, 0);
 
     public PlanetActor actor;
 
@@ -388,7 +388,8 @@ public class Planet {
 
         public Builder orbitRadius(float orbitRadius) {
             instance.orbitRadius = orbitRadius;
-            instance.setPosition(orbitRadius-SYSTEM_CENTER.x, 0);
+            //instance.setPosition(orbitRadius-SYSTEM_CENTER.x, 0);
+            instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
             return this;
         }
 

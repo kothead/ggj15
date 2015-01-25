@@ -49,8 +49,8 @@ public class GameScreen extends BaseScreen {
 
 
         for (int i = 1; i < 4; i++) {
-            Planet planet = new Planet.Builder().width(7+i).height(7+i).build();
-            planet.setPosition(-900*i, 50);
+            Planet planet = new Planet.Builder().width(7+i).height(7 + i).orbitRadius(400*i).build();
+            //planet.setPosition(-900*i, 50);
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
