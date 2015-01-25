@@ -130,7 +130,7 @@ public class Planet {
     }
 
     public void draw(float delta, SpriteBatch batch) {
-        updatePosition(delta);
+        //updatePosition(delta);
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -143,7 +143,7 @@ public class Planet {
         }
     }
 
-    private void updatePosition(float delta){
+    public void process(float delta){
         float x = getCenterX();
         float y = getCenterY();
 
