@@ -279,7 +279,7 @@ public class Planet {
     public Block takeBlock(float x, float y) {
         int idx = getHorizontalIndex(x);
         int idy = getVerticalIndex(y);
-        if(idy > tiles.length || idy < 0 || idx <0 || idx > tiles[0].length){
+        if(idy >= height || idy < 0 || idx <0 || idx >= width){
             return null;
         }
         Block block = tiles[idy][idx];
