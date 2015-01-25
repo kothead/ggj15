@@ -39,6 +39,8 @@ public class Planet {
     private static final float DEFAULT_ORBIT_RADIUS = 1200f;
     private static final Vector2 SYSTEM_CENTER = new Vector2(0, 0);
 
+    private static final String TEXTURE_INK = "ink";
+
     public PlanetActor actor;
 
     public PlanetActor getActor() {
@@ -133,6 +135,8 @@ public class Planet {
     public void draw(float delta, SpriteBatch batch) {
         //updatePosition(delta);
 
+        TextureRegion ink = ImageCache.getTexture(TEXTURE_INK);
+
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Block block = tiles[i][j];
@@ -140,6 +144,7 @@ public class Planet {
                 int x = (int) (j * BLOCK_SIZE + this.x);
                 int y = (int) (i * BLOCK_SIZE + this.y);
                 batch.draw(block.getTexture(), x, y, BLOCK_SIZE, BLOCK_SIZE);
+                if (inked[i][j]) batch.draw(ink, x, y);
             }
         }
     }
