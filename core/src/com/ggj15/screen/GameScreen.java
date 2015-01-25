@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
@@ -27,6 +30,7 @@ public class GameScreen extends BaseScreen {
     private Background background;
     private InkIndicator inkIndicator;
     private HoleIndicator holeIndicator;
+    private Rocket rocket;
 
     private Array<Planet> planets = new Array<Planet>();
 
@@ -37,6 +41,8 @@ public class GameScreen extends BaseScreen {
     private long seed;
 
     public static Random random = new Random();
+
+    private Rectangle tmpRectangle = new Rectangle();
 
     public GameScreen(GGJGame game, long seed) {
         super(game);
@@ -52,15 +58,22 @@ public class GameScreen extends BaseScreen {
 
         background= new Background((int) getWorldWidth(), (int) getWorldHeight());
 
-        player = new Player();
-
         for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
             Planet planet = new Planet.Builder().width(6+random.nextInt(6))
                     .height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150)
-                    .speed((random.nextInt(5)+1)*150).build();
+                    .speed((random.nextInt(5) + 1) * 150).build();
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
+
+        player = new Player();
+        player.setX(MathUtils.random(planets.get(0).getCleanX(), planets.get(0).getCleanX() + planets.get(0).getCleanWidth()));
+        player.setY(planets.get(0).getCleanY() + planets.get(0).getCleanHeight());
+
+        rocket = new Rocket();
+        Planet lastPlanet = planets.get(0);
+        rocket.setX(MathUtils.random(lastPlanet.getCleanX(),lastPlanet.getCleanX() + lastPlanet.getCleanWidth()));
+        rocket.setY(lastPlanet.getCleanY() + lastPlanet.getCleanHeight());
 
         mapStage.addActor(player.getActor());
 
@@ -72,15 +85,15 @@ public class GameScreen extends BaseScreen {
         Table table = new Table();
         table.setFillParent(true);
         stage().addActor(table);
-        table.right().bottom().padBottom(10).padRight(15);
+        table.right().bottom().padBottom(10).padRight(15).padLeft(15);
 
         holeIndicator = new HoleIndicator();
-        table.add(holeIndicator);
+        //table.add(holeIndicator);
 
         table.add().expandX();
 
         inkIndicator = new InkIndicator();
-        table.add(inkIndicator).padRight(15);
+        table.add(inkIndicator);
 
         Gdx.input.setInputProcessor(new Processor());
 
@@ -97,6 +110,14 @@ public class GameScreen extends BaseScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        if (!player.isAlive()) {
+            game.setFinalScreen(false, seed);
+        } else if (Intersector.intersectRectangles(player.getBoundingRectangle(), hole.getBoundingRectangle(), tmpRectangle)) {
+            game.setFinalScreen(false, seed);
+        } else if (rocket.getBoundingRectangle().contains(player.getBoundingRectangle())) {
+            game.setFinalScreen(true, seed);
+        }
 
         player.process(delta, planets);
 //        for(Planet planet: planets){
@@ -131,6 +152,7 @@ public class GameScreen extends BaseScreen {
             }
 
             hole.draw(delta, batch());
+            rocket.draw(batch());
         }
         batch().end();
 

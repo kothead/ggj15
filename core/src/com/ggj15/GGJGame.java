@@ -45,8 +45,8 @@ public class GGJGame extends Game {
         setScreen(new GameScreen(this, seed));
     }
 
-    public void setFinalScreen(boolean win) {
-        setScreen(new FinalScreen(this, win));
+    public void setFinalScreen(boolean win, long seed) {
+        setScreen(new FinalScreen(this, win, seed));
     }
 
     public float getScaleFactor() {
