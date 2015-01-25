@@ -6,12 +6,14 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Created by Тимофей on 25.01.2015.
  */
-public class PlanetController extends Sprite {
+public class PlanetController {
     Array<Planet> planets;
 
     public PlanetController(Array<Planet> planets) {
         this.planets = planets;
     }
 
+    public void process(float delta){
 
+    }
 }

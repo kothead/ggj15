@@ -82,9 +82,11 @@ public class Hole extends Sprite {
     }
 
     public void process(float delta) {
-        setSize(getWidth() + EXPAND_SPEED * delta, getHeight() + EXPAND_SPEED * delta);
-        setX(getX() - EXPAND_SPEED * delta / 2);
-        setY(getY() - EXPAND_SPEED * delta / 2);
+//        setSize(getWidth() + EXPAND_SPEED * delta, getHeight() + EXPAND_SPEED * delta);
+//        setX(getX() - EXPAND_SPEED * delta / 2);
+//        setY(getY() - EXPAND_SPEED * delta / 2);
+
+        setSize(50, 50);
 
         forceRectangle.setSize(getWidth() + 2 * DEFAULT_GRAVITY_DIST, getHeight() + 2 * DEFAULT_GRAVITY_DIST);
         forceRectangle.setX(getX() - DEFAULT_GRAVITY_DIST);

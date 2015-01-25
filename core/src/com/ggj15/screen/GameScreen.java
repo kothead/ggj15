@@ -51,14 +51,14 @@ public class GameScreen extends BaseScreen {
 
 
         planet = new Planet.Builder().width(11).height(11).build();
-        planet.setPosition(50, 50);
+//        planet.setPosition(50, 50);
         planets.add(planet);
 
-        for (int i = 1; i < 4; i++) {
-            planet = new Planet.Builder().width(7+i).height(7+i).build();
-            planet.setPosition(-900*i, 50);
-            planets.add(planet);
-        }
+//        for (int i = 1; i < 4; i++) {
+//            planet = new Planet.Builder().width(7+i).height(7+i).build();
+//            planet.setPosition(-900*i, 50);
+//            planets.add(planet);
+//        }
 
         mapStage.addActor(planet.getActor());
         mapStage.addActor(player.getActor());

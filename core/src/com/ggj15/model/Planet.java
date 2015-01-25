@@ -15,6 +15,7 @@ import com.ggj15.data.ImageCache;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -22,11 +23,24 @@ import java.util.Random;
  */
 public class Planet {
 
+    private enum OrbitDirection{
+        DOWN(0,-1), RIGHT(1,0), UP(0,1), LEFT(-1,0);
+        private float multiplierX, multiplierY;
+
+        OrbitDirection(float multiplierX, float multiplierY) {
+            this.multiplierX = multiplierX;
+            this.multiplierY = multiplierY;
+        }
+    }
+
     private static final int DEFAULT_SIZE = 11;
     private static final int SAFE_SIDE_SIZE = 5;
     public static final int BLOCK_SIZE = 64;
 
-    private static final float DEFAULT_GRAVITY_FORCE = 4000f;
+    private static final float DEFAULT_GRAVITY_FORCE = 40000f;
+    private static final float DEFAULT_SPEED = 300f;
+    private static final float DEFAULT_ORBIT_RADIUS = 1200f;
+    private static final Vector2 SYSTEM_CENTER = new Vector2(Configuration.worldMaxWidth / 2, Configuration.worldMaxHeight / 2);
 
     public PlanetActor actor;
 
@@ -63,6 +77,8 @@ public class Planet {
     private boolean[][] inked;
     private Rectangle objRect, blockRect, intersectionRect, planetRectangle;
     private float force;
+    private float speed;
+    private float orbitRadius;
 
     private Planet() {
         objRect = new Rectangle();
@@ -89,6 +105,9 @@ public class Planet {
     }
 
     public void setPosition(float x, float y) {
+//        this.x = x-getWidth()/2;
+//        this.y = y-getHeight()/2;
+
         this.x = x;
         this.y = y;
     }
@@ -110,6 +129,13 @@ public class Planet {
     }
 
     public void draw(float delta, SpriteBatch batch) {
+        //this.x += speed*delta;
+        OrbitDirection curDirection = getCurrentDirection(delta);
+       // Gdx.app.log("111", curDirection.toString());
+//        this.x += speed*delta*curDirection.multiplierX;
+//        this.y += speed*delta*curDirection.multiplierY;
+
+
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Block block = tiles[i][j];
@@ -119,6 +145,87 @@ public class Planet {
                 batch.draw(block.getTexture(), x, y, BLOCK_SIZE, BLOCK_SIZE);
             }
         }
+    }
+
+    private OrbitDirection getCurrentDirection(float delta){
+//        float[] distances = new float[]{(x-SYSTEM_CENTER.x)-orbitRadius,
+//                (x+SYSTEM_CENTER.x)-orbitRadius,
+//                (y-SYSTEM_CENTER.y)-orbitRadius,
+//                (y+SYSTEM_CENTER.y)-orbitRadius
+//        };
+
+        float lBound =  SYSTEM_CENTER.x-orbitRadius; // left
+        float rBound =  SYSTEM_CENTER.x+orbitRadius; // right
+        float uBound =  SYSTEM_CENTER.y+orbitRadius; // upper
+        float bBound =  SYSTEM_CENTER.y-orbitRadius; // bottom
+
+        float[] distances = new float[]{Math.abs(x-rBound),
+                Math.abs(x-lBound),
+                Math.abs(y-uBound),
+                Math.abs(y-bBound)
+        };
+
+        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
+        Gdx.app.log("111", x + " " + y);
+        Gdx.app.log("111", Arrays.toString(distances));
+
+        float distance = speed*delta;
+
+        OrbitDirection orbitDirection = null;
+
+        if(Math.abs(x-rBound) <0.001){
+            orbitDirection = OrbitDirection.DOWN;
+
+        } else if(Math.abs(y-uBound) <0.001){
+            orbitDirection = OrbitDirection.RIGHT;
+        } else if(Math.abs(y-bBound) <0.001){
+            if(Math.abs(x-lBound) <0.001) {
+                orbitDirection = OrbitDirection.UP;
+            } else {
+                orbitDirection = OrbitDirection.LEFT;
+            }
+        } else if(Math.abs(x-lBound) <0.001){
+
+            orbitDirection = OrbitDirection.UP;
+        }
+
+        Gdx.app.log("111", orbitDirection.toString());
+
+        switch (orbitDirection){
+            case DOWN:
+                if((y-bBound)*(y-bBound-distance)<0){
+                    this.x = rBound-(distance-(y-bBound));
+                    this.y = bBound;
+                    return null;
+                }
+                break;
+            case UP:
+                if((y-uBound)*(y-uBound+distance)<0){
+                    this.x = lBound+(distance-(y-uBound));
+                    this.y = uBound;
+                    return null;
+                }
+                break;
+            case RIGHT:
+                if((x-rBound)*(x-rBound+distance)<0){
+                    this.x = rBound;
+                    this.y = uBound-(distance-(x-rBound));
+                    return null;
+                }
+                break;
+            case LEFT:
+                if((x-lBound)*(x-lBound-distance)<0){
+                    this.x = lBound;
+                    this.y = bBound+(distance-(x-lBound));
+                    return null;
+                }
+                break;
+        }
+
+        this.x += speed*delta*orbitDirection.multiplierX;
+        this.y += speed*delta*orbitDirection.multiplierY;
+
+        return null;
     }
 
     public Block takeBlock(Direction gravity, int x, int y) {
@@ -258,6 +365,10 @@ public class Planet {
             instance.width = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.height = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.force = DEFAULT_GRAVITY_FORCE;
+            instance.speed = DEFAULT_SPEED;
+            instance.orbitRadius = DEFAULT_ORBIT_RADIUS;
+            instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
+//            instance.setPosition(0, 0);
             inkedCount = DEFAULT_INKED_COUNT;
             planetType = PlanetType.GRASS;
         }
@@ -279,6 +390,17 @@ public class Planet {
 
         public Builder force(float force) {
             instance.force = force;
+            return this;
+        }
+
+        public Builder speed(float speed) {
+            instance.speed = speed;
+            return this;
+        }
+
+        public Builder orbitRadius(float orbitRadius) {
+            instance.orbitRadius = orbitRadius;
+            instance.setPosition(orbitRadius-SYSTEM_CENTER.x, 0);
             return this;
         }
 
