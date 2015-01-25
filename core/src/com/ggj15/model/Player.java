@@ -20,16 +20,29 @@ import java.awt.*;
 public class Player extends Sprite {
 
     enum State {
-        WALK("char-walking", 4, 0.1f), STAND("char-stand", 2, 0.2f);
+        WALK("char-walking", 4, 0.1f),
+        STAND("char-stand", 2, 0.2f),
+        SUCK("char-suck", 1, 0);
 
+        private boolean animated;
         private Animation animation;
+        private TextureRegion region;
 
         State(String texture, int count, float duration) {
-            animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+            if (count > 1) {
+                animated = true;
+                animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+            } else {
+                region = ImageCache.getTexture(texture);
+            }
         }
 
         public TextureRegion getFrame(float stateTime) {
-            return animation.getKeyFrame(stateTime, true);
+            if (animated) {
+                return animation.getKeyFrame(stateTime, true);
+            } else {
+                return region;
+            }
         }
     }
 
@@ -59,6 +72,7 @@ public class Player extends Sprite {
     public void process(float delta, Array<Planet> planets) {
         updateState(delta);
         processInputOnce();
+        processState();
 
         float force = 0;
         Planet planet = null;
@@ -167,7 +181,6 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = -WALK_SPEED;
             }
-            setState(State.WALK);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -180,16 +193,15 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = +WALK_SPEED;
             }
-            setState(State.WALK);
         }
 
-        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)
+                || Gdx.input.isKeyPressed(Input.Keys.S)) {
             if (gravity == Direction.DOWN || gravity == Direction.UP) {
                 vx = 0;
             } else {
                 vy = 0;
             }
-            setState(State.STAND);
         }
 
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
@@ -234,6 +246,17 @@ public class Player extends Sprite {
                 }
                 block = null;
             }
+        }
+    }
+
+    private void processState() {
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            setState(State.SUCK);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)
+                || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            setState(State.WALK);
+        } else {
+            setState(State.STAND);
         }
     }
 
