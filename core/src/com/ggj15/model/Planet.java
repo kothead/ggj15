@@ -1,6 +1,5 @@
 package com.ggj15.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,8 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
 import com.ggj15.screen.GameScreen;
-
-import java.util.Arrays;
 
 /**
  * Created by st on 1/24/15.
@@ -553,6 +550,12 @@ public class Planet {
 
     public class PlanetActor extends Actor {
 
+        TextureRegion textureRegion;
+
+        public  PlanetActor() {
+            textureRegion = ImageCache.getTexture("planet-on-map-square");
+        }
+
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
@@ -563,7 +566,7 @@ public class Planet {
             float width = Planet.this.getCleanWidth() * Configuration.scaleFactorX;
             float height = Planet.this.getCleanHeight() * Configuration.scaleFactorY;
 
-            batch.draw(ImageCache.getTexture("rock"),
+            batch.draw(textureRegion,
                     (Planet.this.x + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorX + offsetX,
                     (Planet.this.y + SAFE_SIDE_SIZE * BLOCK_SIZE) * Configuration.scaleFactorY + offsetY,
                     width, height);

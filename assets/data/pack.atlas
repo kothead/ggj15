@@ -4,6 +4,13 @@ size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+black-hole
+  rotate: false
+  xy: 2, 70
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 black-hole-index
   rotate: false
   xy: 2, 305
@@ -20,7 +27,7 @@ char-fly
   index: 1
 char-fly
   rotate: false
-  xy: 2, 70
+  xy: 134, 70
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
@@ -55,70 +62,70 @@ char-hold-walk
   index: 1
 char-hold-walk
   rotate: false
-  xy: 1934, 685
+  xy: 1934, 553
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-jump
   rotate: false
-  xy: 70, 70
+  xy: 202, 70
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: -1
 char-stand
   rotate: false
-  xy: 138, 134
+  xy: 434, 237
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 char-stand
   rotate: false
-  xy: 434, 237
+  xy: 798, 305
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-suck
   rotate: false
-  xy: 798, 305
+  xy: 70, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 char-walking
   rotate: false
-  xy: 70, 2
+  xy: 1934, 485
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 char-walking
   rotate: false
-  xy: 1934, 617
+  xy: 502, 237
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 char-walking
   rotate: false
-  xy: 138, 66
+  xy: 866, 305
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 char-walking
   rotate: false
-  xy: 206, 134
+  xy: 138, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 grass
   rotate: false
-  xy: 502, 237
+  xy: 1934, 417
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -132,7 +139,7 @@ hole-indicator
   index: -1
 ink
   rotate: false
-  xy: 866, 305
+  xy: 570, 237
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -153,14 +160,42 @@ ink-index-mask
   index: -1
 octopus-icon
   rotate: false
-  xy: 1934, 549
+  xy: 934, 305
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+planet-on-map
+  rotate: false
+  xy: 638, 237
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+planet-on-map-square
+  rotate: false
+  xy: 1002, 305
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 rock
   rotate: false
-  xy: 206, 66
+  xy: 706, 237
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+rocket
+  rotate: false
+  xy: 1934, 621
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+rocket-on-map
+  rotate: false
+  xy: 1070, 305
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -188,7 +223,7 @@ sky
   index: 3
 terra
   rotate: false
-  xy: 570, 237
+  xy: 774, 237
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

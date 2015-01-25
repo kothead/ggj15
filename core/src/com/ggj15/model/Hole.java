@@ -41,8 +41,6 @@ public class Hole extends Sprite {
         this.planets = planets;
         center = new Vector2(0, 0);
 
-//        setX(center.x - getWidth() / 2);
-//        setY(center.y - getHeight() / 2);
         setPosition(-getWidth() / 2, -getHeight() / 2);
 
         forceRectangle.setX(getX() - DEFAULT_GRAVITY_DIST);
@@ -50,18 +48,14 @@ public class Hole extends Sprite {
         forceRectangle.setWidth(getWidth() + 2 * DEFAULT_GRAVITY_DIST);
         forceRectangle.setHeight(getHeight() + 2 * DEFAULT_GRAVITY_DIST);
 
-        setRegion(ImageCache.getTexture("terra"));
+        setRegion(ImageCache.getTexture("black-hole"));
         actor = new PlanetActor();
     }
 
     public void draw(ShapeRenderer shapeRenderer, float delta) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        //shapeRenderer.setColor(0.5f, 0, 0.5f, 1);
-        //shapeRenderer.rect(forceRectangle.getX(), forceRectangle.getY(), forceRectangle.getWidth(), forceRectangle.getHeight());
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
-        //shapeRenderer.setColor(1, 0, 0, 1);
-        //shapeRenderer.rect(tmpRectangle.getX(), tmpRectangle.getY(), tmpRectangle.getWidth(), tmpRectangle.getHeight());
         shapeRenderer.end();
     }
 
@@ -86,8 +80,6 @@ public class Hole extends Sprite {
         setSize(getWidth() + EXPAND_SPEED * delta, getHeight() + EXPAND_SPEED * delta);
         setX(getX() - EXPAND_SPEED * delta / 2);
         setY(getY() - EXPAND_SPEED * delta / 2);
-
-        //setSize(50, 50);
 
         forceRectangle.setSize(getWidth() + 2 * DEFAULT_GRAVITY_DIST, getHeight() + 2 * DEFAULT_GRAVITY_DIST);
         forceRectangle.setX(getX() - DEFAULT_GRAVITY_DIST);

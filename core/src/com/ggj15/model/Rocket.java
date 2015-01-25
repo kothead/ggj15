@@ -1,6 +1,5 @@
 package com.ggj15.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,7 +15,7 @@ public class Rocket extends Sprite {
     private RocketActor actor;
 
     public Rocket() {
-        setRegion(ImageCache.getTexture("rock"));
+        setRegion(ImageCache.getTexture("rocket"));
         setSize(getRegionWidth(), getRegionHeight());
         setOrigin(getRegionWidth() / 2f, getRegionHeight() / 2f);
 
@@ -38,10 +37,7 @@ public class Rocket extends Sprite {
         private TextureRegion textureRegion;
 
         public RocketActor() {
-            textureRegion = ImageCache.getTexture("char-fly");
-//            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
-//            setOrigin(textureRegion.getRegionWidth() / 2f,
-//                    textureRegion.getRegionHeight() / 2f);
+            textureRegion = ImageCache.getTexture("rocket-on-map");
         }
 
         @Override
@@ -54,13 +50,9 @@ public class Rocket extends Sprite {
             float offsetX = getStage().getWidth() / 2f;
             float offsetY = getStage().getHeight() / 2f;
 
-            float width = Rocket.this.getWidth() * Configuration.scaleFactorX;
-            float height = Rocket.this.getHeight() * Configuration.scaleFactorY;
-
-            Gdx.app.log("Test", "draw rocket on map");
             batch.draw(textureRegion,
                     x + offsetX, y + offsetY,
-                    width, height);
+                    textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         }
     }
 }
