@@ -181,11 +181,11 @@ public class Planet {
                 Math.abs(y-uBound),
                 Math.abs(y-bBound)
         };
-
-        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
-        Gdx.app.log("111", x + " " + y);
-        Gdx.app.log("111", Arrays.toString(distances));
-
+//
+//        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
+//        Gdx.app.log("111", x + " " + y);
+//        Gdx.app.log("111", Arrays.toString(distances));
+//
         float distance = speed*delta;
 
         OrbitDirection orbitDirection = null;
