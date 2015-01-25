@@ -13,12 +13,13 @@ import com.ggj15.data.ImageCache;
 import com.ggj15.screen.GameScreen;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Created by st on 1/24/15.
  */
 public class Planet {
+
+    public static final int INK_AMOUNT = 10;
 
     private enum OrbitDirection{
         DOWN(0,-1), RIGHT(1,0), UP(0,1), LEFT(-1,0);
@@ -42,6 +43,8 @@ public class Planet {
     private static final String TEXTURE_INK = "ink";
 
     public PlanetActor actor;
+
+    private float dx, dy;
 
     public PlanetActor getActor() {
         return actor;
@@ -95,6 +98,14 @@ public class Planet {
         return y;
     }
 
+    public float getDx(){
+        return dx;
+    }
+
+    public float getDy() {
+        return dy;
+    }
+
     public void setPosition(float x, float y) {
 //        this.x = x-getWidth()/2;
 //        this.y = y-getHeight()/2;
@@ -104,8 +115,12 @@ public class Planet {
     }
 
     public void setCenterPosition(float x, float y) {
-        this.x = (x-getWidth()/2)*1;
-        this.y = (y-getHeight()/2)*1;
+        x -= getWidth() / 2;
+        y -= getHeight() / 2;
+        dx = x - this.x;
+        dy = y - this.y;
+        this.x = x;
+        this.y = y;
     }
 
     float getCenterX(){
@@ -223,6 +238,25 @@ public class Planet {
         }
 
         setCenterPosition(x + speed * delta * orbitDirection.multiplierX, y + speed * delta * orbitDirection.multiplierY);
+    }
+
+    public float getInkAmount(Direction gravity, int x, int y) {
+        int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
+        int idy = getVerticalIndex(y) + Direction.getDy(gravity);
+        if(idy > inked.length || idy < 0 || idx <0 || idx > inked[0].length){
+            return INK_AMOUNT;
+        }
+        inked[idy][idx] = false;
+        return INK_AMOUNT;
+    }
+
+    public boolean hasInk(Direction gravity, int x, int y) {
+        int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
+        int idy = getVerticalIndex(y) + Direction.getDy(gravity);
+        if(idy > inked.length || idy < 0 || idx <0 || idx > inked[0].length){
+            return false;
+        }
+        return inked[idy][idx];
     }
 
     public Block takeBlock(Direction gravity, int x, int y) {

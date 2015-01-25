@@ -118,6 +118,10 @@ public class Hole extends Sprite {
         return actor;
     }
 
+    public Vector2 getCenter() {
+        return center;
+    }
+
     private class PlanetActor extends Actor {
 
         @Override

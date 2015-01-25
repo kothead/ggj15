@@ -11,13 +11,12 @@ import com.badlogic.gdx.utils.Array;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
 
-import javax.xml.soap.Text;
-import java.awt.*;
-
 /**
  * Created by kettricken on 24.01.2015.
  */
 public class Player extends Sprite {
+
+    private static final int MAX_INK_LEVEL = 100;
 
     enum State {
         WALK("char-walking", 4, 0.1f),
@@ -66,12 +65,15 @@ public class Player extends Sprite {
     private State state;
     private float stateTime;
 
+    private float inkLevel = 0;
+
     public Player() {
         setState(State.STAND);
-        setX(50);
-        setY(500);
-
         actor = new PlayerActor();
+    }
+
+    public float getInkLevel() {
+        return inkLevel;
     }
 
     public void process(float delta, Array<Planet> planets) {
@@ -89,6 +91,8 @@ public class Player extends Sprite {
             }
         }
 
+        float dx = 0;
+        float dy = 0;
         if (planet != null) {
             gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
             processInput(planet);
@@ -110,10 +114,12 @@ public class Player extends Sprite {
                     vx += force;
                     break;
             }
+//            dx = planet.getDx();
+//            dy = planet.getDy();
         }
 
-        float dx = vx * delta;
-        float dy = vy * delta;
+        dx += vx * delta;
+        dy += vy * delta;
         for (Planet cur: planets) {
             float[] ds = cur.collide(getX(), getY(),
                     getRegionWidth(), getRegionHeight(), dx, dy);
@@ -240,7 +246,11 @@ public class Player extends Sprite {
     private void processInput(Planet planet) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             if (block == null) {
-                block = planet.takeBlock(gravity, getCenterX(), getCenterY());
+                if (planet.hasInk(gravity, getCenterX(), getCenterY())){
+                    inkLevel = Math.min(inkLevel + planet.getInkAmount(gravity, getCenterX(), getCenterY()), MAX_INK_LEVEL);
+                } else {
+                    block = planet.takeBlock(gravity, getCenterX(), getCenterY());
+                }
             } else {
                 Gdx.app.log("test", "trying to put block");
                 boolean success = planet.putBlock(block, getCenterX(), getCenterY());

@@ -25,6 +25,8 @@ public class GameScreen extends BaseScreen {
     private Hole hole;
     private PlanetController planetController;
     private Background background;
+    private InkIndicator inkIndicator;
+    private HoleIndicator holeIndicator;
 
     private Array<Planet> planets = new Array<Planet>();
 
@@ -53,7 +55,9 @@ public class GameScreen extends BaseScreen {
         player = new Player();
 
         for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
-            Planet planet = new Planet.Builder().width(6+random.nextInt(6)).height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150).speed((random.nextInt(5)+1)*150).build();
+            Planet planet = new Planet.Builder().width(6+random.nextInt(6))
+                    .height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150)
+                    .speed((random.nextInt(5)+1)*150).build();
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
@@ -70,13 +74,13 @@ public class GameScreen extends BaseScreen {
         stage().addActor(table);
         table.right().bottom().padBottom(10).padRight(15);
 
-        HoleIndicator holeIndicator = new HoleIndicator();
+        holeIndicator = new HoleIndicator();
         table.add(holeIndicator);
 
         table.add().expandX();
 
-        InkIndicator inkIndicator = new InkIndicator();
-        table.add(inkIndicator);
+        inkIndicator = new InkIndicator();
+        table.add(inkIndicator).padRight(15);
 
         Gdx.input.setInputProcessor(new Processor());
 
@@ -95,9 +99,10 @@ public class GameScreen extends BaseScreen {
         super.render(delta);
 
         player.process(delta, planets);
-        for(Planet planet: planets){
-            planet.process(delta);
-        }
+//        for(Planet planet: planets){
+//            planet.process(delta);
+//        }
+        inkIndicator.setInkLevel(player.getInkLevel());
 
         Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -108,6 +113,13 @@ public class GameScreen extends BaseScreen {
         shapes().setProjectionMatrix(getCamera().combined);
 
         hole.process(delta);
+
+        float diff = (float) Math.sqrt(Math.pow(player.getX() - hole.getCenter().x, 2) +
+                Math.pow(player.getY() - hole.getCenter().y, 2));
+        diff -= hole.getWidth() / 2;
+        Gdx.app.log("dist", "d " + diff);
+        holeIndicator.updateHoleDistance(diff);
+
 
         batch().begin();
         background.setPosition(player.getX() - getWorldWidth() / 2, player.getY() - getWorldHeight() / 2);

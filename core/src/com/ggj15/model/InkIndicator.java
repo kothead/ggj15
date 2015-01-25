@@ -16,7 +16,7 @@ public class InkIndicator extends Actor {
     private Sprite bottomSprite;
     private Sprite topSprite;
 
-    private float inkLevel = 100;
+    private float inkLevel = 0;
 
     ShapeRenderer renderer = new ShapeRenderer();
 
@@ -28,7 +28,6 @@ public class InkIndicator extends Actor {
         this.setHeight(bottomSprite.getHeight());
         this.setBounds(0, 0, this.getWidth(), this.getHeight());
 
-        inkLevel = this.getWidth() / 2;
     }
 
     @Override
@@ -58,6 +57,7 @@ public class InkIndicator extends Actor {
         Gdx.gl.glDepthMask(true);
         Gdx.gl.glColorMask(false, false, false, true);
 
+        renderer.setProjectionMatrix(getStage().getCamera().combined);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(1, 1, 1, 1);
         float width = bottomSprite.getX() + bottomSprite.getWidth() - inkLevel;
@@ -72,14 +72,14 @@ public class InkIndicator extends Actor {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
 
-        batch.draw(topSprite, bottomSprite.getX(), getY());
+        batch.draw(topSprite, bottomSprite.getX(), bottomSprite.getY());
         batch.flush();
 
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(false);
     }
 
-    public void setInkLevel() {
-        //TODO: implement
+    public void setInkLevel(float inkLevel) {
+        this.inkLevel = bottomSprite.getWidth() * (inkLevel / 100);
     }
 }
