@@ -12,6 +12,8 @@ import com.ggj15.GGJGame;
 import com.ggj15.data.Configuration;
 import com.ggj15.model.*;
 
+import java.util.Random;
+
 /**
  * Created by kettricken on 24.01.2015.
  */
@@ -32,10 +34,13 @@ public class GameScreen extends BaseScreen {
 
     private long seed;
 
+    public static Random random = new Random();
+
     public GameScreen(GGJGame game, long seed) {
         super(game);
         this.game = game;
         this.seed = seed;
+        random.setSeed(seed);
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
 
@@ -47,10 +52,8 @@ public class GameScreen extends BaseScreen {
 
         player = new Player();
 
-
-        for (int i = 1; i < 4; i++) {
-            Planet planet = new Planet.Builder().width(7+i).height(7 + i).orbitRadius(700*i).build();
-            //planet.setPosition(-900*i, 50);
+        for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
+            Planet planet = new Planet.Builder().width(6+random.nextInt(6)).height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150).speed((random.nextInt(5)+1)*150).build();
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
