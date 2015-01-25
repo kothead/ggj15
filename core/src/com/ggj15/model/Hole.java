@@ -39,10 +39,11 @@ public class Hole extends Sprite {
     public Hole(Array<Planet> planets) {
         super();
         this.planets = planets;
-        center = new Vector2(Configuration.worldMaxWidth / 2, Configuration.worldMaxHeight / 2);
+        center = new Vector2(0, 0);
 
-        setX(center.x - getWidth() / 2);
-        setY(center.y - getHeight() / 2);
+//        setX(center.x - getWidth() / 2);
+//        setY(center.y - getHeight() / 2);
+        setPosition(-getWidth() / 2, -getHeight() / 2);
 
         forceRectangle.setX(getX() - DEFAULT_GRAVITY_DIST);
         forceRectangle.setY(getY() - DEFAULT_GRAVITY_DIST);
@@ -122,9 +123,13 @@ public class Hole extends Sprite {
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch, parentAlpha);
+
+            float offsetX = getStage().getWidth() / 2f;
+            float offsetY = getStage().getHeight() / 2f;
+
             batch.draw(Hole.this,
-                    Hole.this.getX() * Configuration.scaleFactorX,
-                    Hole.this.getY() * Configuration.scaleFactorY,
+                    Hole.this.getX() * Configuration.scaleFactorX + offsetX,
+                    Hole.this.getY() * Configuration.scaleFactorY + offsetY,
                     Hole.this.getWidth() * Configuration.scaleFactorX,
                     Hole.this.getHeight() * Configuration.scaleFactorY);
         }

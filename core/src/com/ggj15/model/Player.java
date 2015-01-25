@@ -2,26 +2,41 @@ package com.ggj15.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Array;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
+
+import javax.xml.soap.Text;
+import java.awt.*;
 
 /**
  * Created by kettricken on 24.01.2015.
  */
 public class Player extends Sprite {
 
-    private static final String GRASS = "grass";
+    enum State {
+        WALK("char-walking", 4, 0.1f), STAND("char-stand", 2, 0.2f);
+
+        private Animation animation;
+
+        State(String texture, int count, float duration) {
+            animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+        }
+
+        public TextureRegion getFrame(float stateTime) {
+            return animation.getKeyFrame(stateTime, true);
+        }
+    }
 
     private final float FLY_THRESHOLD = 1;
     private final float WALK_SPEED = 100f;
     private final float JUMP_ACCEL = 300f;
     private final float INK_ACCEL = 10f;
-
-    private static final String CHAR_STAND = "char-stand";
 
     private float vx, vy;
     private boolean flying = false;
@@ -30,48 +45,64 @@ public class Player extends Sprite {
 
     private PlayerActor actor;
 
+    private State state;
+    private float stateTime;
+
     public Player() {
-        setRegion(ImageCache.getFrame(CHAR_STAND, 1));
-        setSize(getRegionWidth(), getRegionHeight());
+        setState(State.STAND);
         setX(50);
         setY(500);
-        setOriginCenter();
 
         actor = new PlayerActor();
     }
 
-    public void process(float delta, Planet planet) {
-        gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
-        processInput(planet);
-        boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
-        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W);
+    public void process(float delta, Array<Planet> planets) {
+        updateState(delta);
+        processInputOnce();
 
-        float force = planet.getForce(getX(), getY());
-        switch (gravity) {
-            case DOWN:
-                vy += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0) - force;
-                break;
-
-            case UP:
-                vy += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0) + force;
-                break;
-
-            case LEFT:
-                vx += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0) - force;
-                break;
-
-            case RIGHT:
-                vx += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0) + force;
-                break;
+        float force = 0;
+        Planet planet = null;
+        for (Planet cur: planets) {
+            float temp = cur.getForce(getX(), getY());
+            if (temp > force) {
+                force = temp;
+                planet = cur;
+            }
         }
+
+        if (planet != null) {
+            gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
+            processInput(planet);
+
+            switch (gravity) {
+                case DOWN:
+                    vy -= force;
+                    break;
+
+                case UP:
+                    vy += force;
+                    break;
+
+                case LEFT:
+                    vx -= force;
+                    break;
+
+                case RIGHT:
+                    vx += force;
+                    break;
+            }
+        }
+
         float dx = vx * delta;
         float dy = vy * delta;
-        float[] ds = planet.collide(getX(), getY(),
-                getRegionWidth(), getRegionHeight(), dx, dy);
-        if (ds[0] != dx) vx = 0;
-        if (ds[1] != dy) vy = 0;
-        dx = ds[0];
-        dy = ds[1];
+        for (Planet cur: planets) {
+            float[] ds = cur.collide(getX(), getY(),
+                    getRegionWidth(), getRegionHeight(), dx, dy);
+            if (ds[0] != dx) vx = 0;
+            if (ds[1] != dy) vy = 0;
+            dx = ds[0];
+            dy = ds[1];
+        }
         setX(getX() + dx);
         setY(getY() + dy);
 
@@ -80,9 +111,10 @@ public class Player extends Sprite {
 
     @Override
     public void draw(Batch batch) {
+        setRegion(getStateFrame());
+        setSize(getRegionWidth(), getRegionHeight());
+        setOriginCenter();
         super.draw(batch);
-        batch.draw(this, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
-                getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     private void setRotation() {
@@ -109,7 +141,22 @@ public class Player extends Sprite {
         flying = true;
     }
 
-    private void processInput(Planet planet) {
+    private void setState(State state) {
+        if (this.state != state) {
+            this.state = state;
+            stateTime = 0;
+        }
+    }
+
+    private void updateState(float delta) {
+        stateTime += delta;
+    }
+
+    private TextureRegion getStateFrame() {
+        return state.getFrame(stateTime);
+    }
+
+    private void processInputOnce() {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (gravity == Direction.DOWN) {
                 vx = -WALK_SPEED;
@@ -120,6 +167,7 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = -WALK_SPEED;
             }
+            setState(State.WALK);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -132,8 +180,41 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = +WALK_SPEED;
             }
+            setState(State.WALK);
         }
 
+        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if (gravity == Direction.DOWN || gravity == Direction.UP) {
+                vx = 0;
+            } else {
+                vy = 0;
+            }
+            setState(State.STAND);
+        }
+
+        boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
+        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W);
+
+        switch (gravity) {
+            case DOWN:
+                vy += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0);
+                break;
+
+            case UP:
+                vy += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0);
+                break;
+
+            case LEFT:
+                vx += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0);
+                break;
+
+            case RIGHT:
+                vx += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0);
+                break;
+        }
+    }
+
+    private void processInput(Planet planet) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             if (block == null) {
                 block = planet.takeBlock(gravity, getCenterX(), getCenterY());
@@ -174,23 +255,34 @@ public class Player extends Sprite {
 
         public PlayerActor() {
             textureRegion = ImageCache.getTexture("octopus-icon");
-            setSize(Player.this.getWidth() * Configuration.scaleFactorX,
-                    Player.this.getHeight() * Configuration.scaleFactorY);
-            setOriginCenter();
+            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+            setOrigin(textureRegion.getRegionWidth() / 2f,
+                    textureRegion.getRegionHeight() / 2f);
         }
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             setRotation(Player.this.getRotation());
-            super.draw(batch, parentAlpha);
+
+
             float x = Player.this.getX() * Configuration.scaleFactorX;
             float y = Player.this.getY() * Configuration.scaleFactorY;
+
+            float offsetX = getStage().getWidth() / 2f;
+            float offsetY = getStage().getHeight() / 2f;
+
+            setPosition(x + offsetX, y + offsetY);
+
+            /*
+             * TODO: do something with this wtf
+             */
             if (gravity == Direction.RIGHT)
-                x += getWidth();
+                x -= getWidth() / 2f;
             if (gravity == Direction.UP)
-                y += getHeight();
+                y -= getHeight() / 2f;
+
             batch.draw(textureRegion,
-                 x, y,
+                 x + offsetX, y + offsetY,
                  getOriginX(),
                  getOriginY(),
                  getWidth(),
