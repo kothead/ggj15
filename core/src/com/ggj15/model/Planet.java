@@ -442,7 +442,7 @@ public class Planet {
                 if(!instance.inked[y][x]){
                     instance.inked[y][x] = true;
                     i--;
-                    instance.tiles[y][x] = Block.ROCK;
+                    //instance.tiles[y][x] = Block.ROCK;
                 }
             }
 
