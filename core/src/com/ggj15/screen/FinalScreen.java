@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ggj15.GGJGame;
 import com.ggj15.data.SkinCache;
+import com.ggj15.data.SoundCache;
 import com.ggj15.model.Background;
 
 /**
@@ -32,8 +33,10 @@ public class FinalScreen extends BaseScreen {
 
         if (win) {
             title = "YOU'VE SURVIVED!";
+            SoundCache.play("win");
         } else {
             title = "GAME OVER";
+            SoundCache.play("death");
         }
 
         int colspan = 1;

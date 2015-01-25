@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ggj15.GGJGame;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.Messages;
+import com.ggj15.data.MusicCache;
 import com.ggj15.data.SkinCache;
 import com.ggj15.model.*;
 
@@ -117,6 +118,8 @@ public class GameScreen extends BaseScreen {
             messages = new Messages(helpLabel);
             messages.setMessage(Messages.START_TUTORIAL);
         }
+
+        MusicCache.play(MusicCache.TYNC);
     }
 
     @Override
@@ -191,6 +194,7 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         super.dispose();
         mapStage.dispose();
+        MusicCache.pause();
     }
 
     private class Processor extends InputAdapter {

@@ -8,13 +8,13 @@ import com.badlogic.gdx.audio.Music;
  */
 public class MusicCache {
 
-    public static final String GLOOM = "gloom";
+    public static final String TYNC = "tync";
 
     private static final String MUSIC_DIR = "assets/audio/music/";
     private static final String MUSIC_EXT = ".mp3";
     private static final float VOLUME = 1f;
 
-    private static String key = GLOOM;
+    private static String key = TYNC;
     private static Music music;
 
     public static void play() {

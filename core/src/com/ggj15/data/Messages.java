@@ -19,9 +19,9 @@ public class Messages {
             "press A/D to move LEFT/RIGHT",
             "press W to jump, hold W to fly",
             "press M to show map",
-            "left bottom meter is distance from the black hole to you. If it's filled YOU ARE DEAD!",
-            "right bottom one is your ink level. If it's zero YOU ARE DEAD!",
-            "and now GET TO THE ROCKET!",
+            "if you fell in the black hole YOU ARE DEAD!",
+            "there is your ink level. If it's zero YOU ARE DEAD!",
+            "and what do you do now? OF COURSE, GET TO THE ROCKET!",
             ""
     };
 

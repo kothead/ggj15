@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class SoundCache {
 
     private static final String SOUND_DIR = "assets/audio/sound/";
-    private static final String SOUND_EXT = ".mp3";
+    private static final String SOUND_EXT = ".wav";
 
     private static ObjectMap<String, Sound> sounds;
 
@@ -18,9 +18,15 @@ public class SoundCache {
         sounds = new ObjectMap<String, Sound>();
 
         String[] keys = {
-                /*
-                TODO: insert names here
-                 */
+                "block",
+                "death",
+                "jump",
+                "planet_burst",
+                "planet_burst2",
+                "rocket",
+                "take-off",
+                "win",
+                "ink"
         };
         for (String key: keys) {
             Sound sound = Gdx.audio.newSound(Gdx.files.internal(SOUND_DIR + key + SOUND_EXT));

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
+import com.ggj15.data.SoundCache;
 
 /**
  * Created by kettricken on 24.01.2015.
@@ -240,11 +241,18 @@ public class Player extends Sprite {
         }
 
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W) && standing;
+        if (hitUp) {
+            SoundCache.play("jump");
+        }
+
         boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W) && block == null;
+
+        boolean old = flying;
         flying = false;
         if (holdingUp) {
             timeHoldingUp += delta;
             flying = timeHoldingUp > TIME_HOLD_BEFORE_FLY && inkLevel > 0;
+            if (flying != old) SoundCache.play("take-off");
         } else {
             timeHoldingUp = 0;
         }
@@ -276,12 +284,17 @@ public class Player extends Sprite {
             if (block == null) {
                 if (planet.hasInk(gravity, getCenterX(), getCenterY())){
                     inkLevel = Math.min(inkLevel + planet.getInkAmount(gravity, getCenterX(), getCenterY()), MAX_INK_LEVEL);
+                    SoundCache.play("ink");
                 } else {
                     block = planet.takeBlock(gravity, getCenterX(), getCenterY());
+                    if (block != null) {
+                        SoundCache.play("block");
+                    }
                 }
             } else {
 //                Gdx.app.log("test", "trying to put block");
                 boolean success = planet.putBlock(block, getCenterX(), getCenterY());
+                SoundCache.play("block");
 //                Gdx.app.log("test", "success: " + success);
                 if (!success) return;
                 if (gravity == Direction.DOWN) {

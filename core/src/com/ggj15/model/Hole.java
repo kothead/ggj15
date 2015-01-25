@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
+import com.ggj15.data.SoundCache;
 
 import java.util.Iterator;
 
@@ -101,6 +102,7 @@ public class Hole extends Sprite {
                 Vector2 coordinates = planet.getBlockCoordinates(x, y);
                 Planet.Block block = planet.takeBlock(x, y);
                 if (block != null) {
+                    SoundCache.play("planet_burst2");
                     blocks.add(block);
                     blocksPositions.add(coordinates);
                 }
