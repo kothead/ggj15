@@ -24,7 +24,10 @@ public class Player extends Sprite {
         WALK_HOLD("char-hold-walk", 2, 0.2f),
         STAND_HOLD("char-hold-stand", 1, 0),
         STAND("char-stand", 2, 0.2f),
-        SUCK("char-suck", 1, 0);
+        SUCK("char-suck", 1, 0),
+        JUMP("char-jump", 1, 0),
+        JUMP_HOLD("char-hold-jump", 1, 0),
+        FLY("char-fly", 3, 0.1f);
 
         private boolean animated;
         private Animation animation;
@@ -213,7 +216,7 @@ public class Player extends Sprite {
         }
 
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
-        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W) && block == null;
 
         switch (gravity) {
             case DOWN:
@@ -260,6 +263,18 @@ public class Player extends Sprite {
     private void processState() {
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             setState(State.SUCK);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            if (block != null) {
+                setState(State.JUMP_HOLD);
+            } else {
+                setState(State.JUMP);
+            }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            if (block != null) {
+                setState(State.JUMP_HOLD);
+            } else {
+                setState(State.FLY);
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)
                 || Gdx.input.isKeyPressed(Input.Keys.D)) {
             if (block != null) {
