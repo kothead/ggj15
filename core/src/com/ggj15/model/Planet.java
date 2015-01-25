@@ -100,6 +100,19 @@ public class Planet {
         this.y = y;
     }
 
+    public void setCenterPosition(float x, float y) {
+        this.x = x-getWidth()/2;
+        this.y = y-getHeight()/2;
+    }
+
+    float getCenterX(){
+        return x+getWidth()/2;
+    }
+
+    float getCenterY(){
+        return y+getHeight()/2;
+    }
+
     public Rectangle getRectangle() {
         planetRectangle.setX(this.x);
         planetRectangle.setY(this.y);
@@ -117,12 +130,7 @@ public class Planet {
     }
 
     public void draw(float delta, SpriteBatch batch) {
-        //this.x += speed*delta;
-        OrbitDirection curDirection = getCurrentDirection(delta);
-       // Gdx.app.log("111", curDirection.toString());
-//        this.x += speed*delta*curDirection.multiplierX;
-//        this.y += speed*delta*curDirection.multiplierY;
-
+        updatePosition(delta);
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -135,12 +143,9 @@ public class Planet {
         }
     }
 
-    private OrbitDirection getCurrentDirection(float delta){
-//        float[] distances = new float[]{(x-SYSTEM_CENTER.x)-orbitRadius,
-//                (x+SYSTEM_CENTER.x)-orbitRadius,
-//                (y-SYSTEM_CENTER.y)-orbitRadius,
-//                (y+SYSTEM_CENTER.y)-orbitRadius
-//        };
+    private void updatePosition(float delta){
+        float x = getCenterX();
+        float y = getCenterY();
 
         float lBound =  SYSTEM_CENTER.x-orbitRadius; // left
         float rBound =  SYSTEM_CENTER.x+orbitRadius; // right
@@ -177,43 +182,38 @@ public class Planet {
             orbitDirection = OrbitDirection.UP;
         }
 
-        Gdx.app.log("111", orbitDirection.toString());
+        if(orbitDirection == null){
+            return;
+        }
 
         switch (orbitDirection){
             case DOWN:
                 if((y-bBound)*(y-bBound-distance)<0){
-                    this.x = rBound-(distance-(y-bBound));
-                    this.y = bBound;
-                    return null;
+                    setCenterPosition(rBound - (distance - (y - bBound)), bBound);
+                    return;
                 }
                 break;
             case UP:
                 if((y-uBound)*(y-uBound+distance)<0){
-                    this.x = lBound+(distance-(y-uBound));
-                    this.y = uBound;
-                    return null;
+                    setCenterPosition(lBound + (distance - (y - uBound)), uBound);
+                    return;
                 }
                 break;
             case RIGHT:
                 if((x-rBound)*(x-rBound+distance)<0){
-                    this.x = rBound;
-                    this.y = uBound-(distance-(x-rBound));
-                    return null;
+                    setCenterPosition(rBound, uBound - (distance - (x - rBound)));
+                    return;
                 }
                 break;
             case LEFT:
                 if((x-lBound)*(x-lBound-distance)<0){
-                    this.x = lBound;
-                    this.y = bBound+(distance-(x-lBound));
-                    return null;
+                    setCenterPosition(lBound, bBound + (distance - (x - lBound)));
+                    return;
                 }
                 break;
         }
 
-        this.x += speed*delta*orbitDirection.multiplierX;
-        this.y += speed*delta*orbitDirection.multiplierY;
-
-        return null;
+        setCenterPosition(x + speed * delta * orbitDirection.multiplierX, y + speed * delta * orbitDirection.multiplierY);
     }
 
     public Block takeBlock(Direction gravity, int x, int y) {
@@ -355,7 +355,9 @@ public class Planet {
             instance.force = DEFAULT_GRAVITY_FORCE;
             instance.speed = DEFAULT_SPEED;
             instance.orbitRadius = DEFAULT_ORBIT_RADIUS;
-            instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
+            //instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
+            instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius, SYSTEM_CENTER.y - instance.orbitRadius);
+
 //            instance.setPosition(0, 0);
             inkedCount = DEFAULT_INKED_COUNT;
             planetType = PlanetType.GRASS;
@@ -389,7 +391,8 @@ public class Planet {
         public Builder orbitRadius(float orbitRadius) {
             instance.orbitRadius = orbitRadius;
             //instance.setPosition(orbitRadius-SYSTEM_CENTER.x, 0);
-            instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
+            //instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
+            instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius, SYSTEM_CENTER.y - instance.orbitRadius);
             return this;
         }
 
