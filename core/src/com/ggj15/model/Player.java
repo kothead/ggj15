@@ -17,6 +17,17 @@ import com.ggj15.data.ImageCache;
 public class Player extends Sprite {
 
     private static final int MAX_INK_LEVEL = 100;
+    private static final float INK_DECREASE = 0.5f;
+
+    private static final int DEFAULT_HEIGHT = 64;
+    private final float SIZE = 60;
+
+    private final float TIME_HOLD_BEFORE_FLY = 0.5f;
+    private final float FLY_THRESHOLD = 1;
+    private final float WALK_SPEED = 100f;
+    private final float JUMP_ACCEL = 300f;
+    private final float INK_ACCEL = 30f;
+    private final float START_INK_LEVEL = 25;
 
     enum State {
         WALK("char-walking", 4, 0.1f),
@@ -50,15 +61,12 @@ public class Player extends Sprite {
         }
     }
 
-    private final float FLY_THRESHOLD = 1;
-    private final float WALK_SPEED = 100f;
-    private final float JUMP_ACCEL = 300f;
-    private final float INK_ACCEL = 10f;
-
     private float vx, vy;
     private boolean flying = false;
     private Direction gravity = Direction.DOWN;
     private Planet.Block block;
+    private boolean standing = false;
+    private float timeHoldingUp = 0;
 
     private PlayerActor actor;
 
@@ -68,6 +76,7 @@ public class Player extends Sprite {
     private float inkLevel = 0;
 
     public Player() {
+        inkLevel = START_INK_LEVEL;
         setState(State.STAND);
         actor = new PlayerActor();
     }
@@ -78,7 +87,8 @@ public class Player extends Sprite {
 
     public void process(float delta, Array<Planet> planets) {
         updateState(delta);
-        processInputOnce();
+
+        processInputOnce(delta);
         processState();
 
         float force = 0;
@@ -95,6 +105,7 @@ public class Player extends Sprite {
         float dy = 0;
         if (planet != null) {
             gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
+            standing = planet.hasBlock(getCenterX(), getCenterY(), gravity);
             processInput(planet);
 
             switch (gravity) {
@@ -122,7 +133,7 @@ public class Player extends Sprite {
         dy += vy * delta;
         for (Planet cur: planets) {
             float[] ds = cur.collide(getX(), getY(),
-                    getRegionWidth(), getRegionHeight(), dx, dy);
+                    getWidth(), getHeight(), dx, dy);
             if (ds[0] != dx) vx = 0;
             if (ds[1] != dy) vy = 0;
             dx = ds[0];
@@ -134,11 +145,18 @@ public class Player extends Sprite {
         setRotation();
     }
 
+    public boolean isAlive() {
+        return inkLevel > 0;
+    }
+
     @Override
     public void draw(Batch batch) {
         setRegion(getStateFrame());
-        setSize(getRegionWidth(), getRegionHeight());
-        setOriginCenter();
+        //setSize(getRegionWidth(), getRegionHeight());
+
+        // for jumping/flying animation with non-standart height
+        setSize(SIZE, getRegionHeight() == DEFAULT_HEIGHT ? SIZE : getRegionHeight());
+        setOrigin(SIZE / 2f, SIZE / 2f);
         super.draw(batch);
 
         if (block != null) {
@@ -187,7 +205,7 @@ public class Player extends Sprite {
         return state.getFrame(stateTime);
     }
 
-    private void processInputOnce() {
+    private void processInputOnce(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (gravity == Direction.DOWN) {
                 vx = -WALK_SPEED;
@@ -221,25 +239,35 @@ public class Player extends Sprite {
             }
         }
 
-        boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
+        boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W) && standing;
         boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W) && block == null;
+        flying = false;
+        if (holdingUp) {
+            timeHoldingUp += delta;
+            flying = timeHoldingUp > TIME_HOLD_BEFORE_FLY && inkLevel > 0;
+        } else {
+            timeHoldingUp = 0;
+        }
 
         switch (gravity) {
             case DOWN:
-                vy += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0);
+                vy += (hitUp ? JUMP_ACCEL : 0) + (flying ? INK_ACCEL : 0);
                 break;
 
             case UP:
-                vy += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0);
+                vy += (hitUp ? -JUMP_ACCEL : 0) + (flying ? -INK_ACCEL : 0);
                 break;
 
             case LEFT:
-                vx += (hitUp ? JUMP_ACCEL : 0) + (holdingUp ? INK_ACCEL : 0);
+                vx += (hitUp ? JUMP_ACCEL : 0) + (flying ? INK_ACCEL : 0);
                 break;
 
             case RIGHT:
-                vx += (hitUp ? -JUMP_ACCEL : 0) + (holdingUp ? -INK_ACCEL : 0);
+                vx += (hitUp ? -JUMP_ACCEL : 0) + (flying ? -INK_ACCEL : 0);
                 break;
+        }
+        if (flying && inkLevel > 0) {
+            inkLevel -= INK_DECREASE;
         }
     }
 
@@ -282,7 +310,7 @@ public class Player extends Sprite {
         } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             if (block != null) {
                 setState(State.JUMP_HOLD);
-            } else {
+            } else if (flying) {
                 setState(State.FLY);
             }
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)

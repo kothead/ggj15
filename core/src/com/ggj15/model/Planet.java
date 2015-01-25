@@ -35,7 +35,10 @@ public class Planet {
     private static final int SAFE_SIDE_SIZE = 5;
     public static final int BLOCK_SIZE = 64;
 
-    private static final float DEFAULT_GRAVITY_FORCE = 4000f;
+    private static final float DEFAULT_GRAVITY_FORCE = 10000f;
+    private static final float BASE_GRAVITY_DIVIDER = 900f;
+
+
     private static final float DEFAULT_SPEED = 300f;
     private static final float DEFAULT_ORBIT_RADIUS = 1200f;
     private static final Vector2 SYSTEM_CENTER = new Vector2(0, 0);
@@ -144,7 +147,7 @@ public class Planet {
         float centerY = this.y + height * BLOCK_SIZE / 2f;
         float diffX = centerX - x;
         float diffY = centerY - y;
-        return DEFAULT_GRAVITY_FORCE / (float) Math.sqrt(diffX * diffX + diffY * diffY);
+        return DEFAULT_GRAVITY_FORCE / (float) (Math.sqrt(diffX * diffX + diffY * diffY) + BASE_GRAVITY_DIVIDER);
     }
 
     public void draw(float delta, SpriteBatch batch) {
@@ -284,6 +287,12 @@ public class Planet {
         return block;
     }
 
+    public boolean hasBlock(float x, float y, Direction gravity) {
+        int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
+        int idy = getVerticalIndex(y) + Direction.getDy(gravity);
+        return idx >= 0 && idx < width && idy >=0 && idy < height && tiles[idy][idx] != null;
+    }
+
     public Vector2 getBlockCoordinates(float x, float y) {
         return new Vector2(getHorizontalIndex(x) * BLOCK_SIZE + this.x, getVerticalIndex(y) * BLOCK_SIZE + this.y);
     }
@@ -291,7 +300,8 @@ public class Planet {
     public boolean putBlock(Block block, int x, int y) {
         int idx = getHorizontalIndex(x);
         int idy = getVerticalIndex(y);
-        if (tiles[idy][idx] == null) {
+        if (idx >=0 && idy >= 0 && idx < width && idy < height
+                && tiles[idy][idx] == null) {
             tiles[idy][idx] = block;
             calcLimits();
             return true;
@@ -316,7 +326,7 @@ public class Planet {
             case RIGHT:
                 if (idx >= minX && idx <= maxX) {
                     if (idy < minY) return Direction.UP;
-                    if (idy > minY) return Direction.DOWN;
+                    if (idy > maxY) return Direction.DOWN;
                 }
                 break;
         }
