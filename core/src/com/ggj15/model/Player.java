@@ -20,16 +20,34 @@ import java.awt.*;
 public class Player extends Sprite {
 
     enum State {
-        WALK("char-walking", 4, 0.1f), STAND("char-stand", 2, 0.2f);
+        WALK("char-walking", 4, 0.1f),
+        WALK_HOLD("char-hold-walk", 2, 0.2f),
+        STAND_HOLD("char-hold-stand", 1, 0),
+        STAND("char-stand", 2, 0.2f),
+        SUCK("char-suck", 1, 0),
+        JUMP("char-jump", 1, 0),
+        JUMP_HOLD("char-hold-jump", 1, 0),
+        FLY("char-fly", 3, 0.1f);
 
+        private boolean animated;
         private Animation animation;
+        private TextureRegion region;
 
         State(String texture, int count, float duration) {
-            animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+            if (count > 1) {
+                animated = true;
+                animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+            } else {
+                region = ImageCache.getTexture(texture);
+            }
         }
 
         public TextureRegion getFrame(float stateTime) {
-            return animation.getKeyFrame(stateTime, true);
+            if (animated) {
+                return animation.getKeyFrame(stateTime, true);
+            } else {
+                return region;
+            }
         }
     }
 
@@ -59,6 +77,7 @@ public class Player extends Sprite {
     public void process(float delta, Array<Planet> planets) {
         updateState(delta);
         processInputOnce();
+        processState();
 
         float force = 0;
         Planet planet = null;
@@ -115,6 +134,12 @@ public class Player extends Sprite {
         setSize(getRegionWidth(), getRegionHeight());
         setOriginCenter();
         super.draw(batch);
+
+        if (block != null) {
+            float x = getX() + Direction.getDx(gravity.getOpposite()) * Planet.BLOCK_SIZE;
+            float y = getY() + Direction.getDy(gravity.getOpposite()) * Planet.BLOCK_SIZE;
+            batch.draw(block.getTexture(), x, y);
+        }
     }
 
     private void setRotation() {
@@ -167,7 +192,6 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = -WALK_SPEED;
             }
-            setState(State.WALK);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -180,20 +204,19 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = +WALK_SPEED;
             }
-            setState(State.WALK);
         }
 
-        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)
+                || Gdx.input.isKeyPressed(Input.Keys.S)) {
             if (gravity == Direction.DOWN || gravity == Direction.UP) {
                 vx = 0;
             } else {
                 vy = 0;
             }
-            setState(State.STAND);
         }
 
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
-        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean holdingUp = !hitUp && Gdx.input.isKeyPressed(Input.Keys.W) && block == null;
 
         switch (gravity) {
             case DOWN:
@@ -233,6 +256,37 @@ public class Player extends Sprite {
                     setX(getX() - Planet.BLOCK_SIZE);
                 }
                 block = null;
+            }
+        }
+    }
+
+    private void processState() {
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            setState(State.SUCK);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            if (block != null) {
+                setState(State.JUMP_HOLD);
+            } else {
+                setState(State.JUMP);
+            }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            if (block != null) {
+                setState(State.JUMP_HOLD);
+            } else {
+                setState(State.FLY);
+            }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)
+                || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            if (block != null) {
+                setState(State.WALK_HOLD);
+            } else {
+                setState(State.WALK);
+            }
+        } else {
+            if (block != null) {
+                setState(State.STAND_HOLD);
+            } else {
+                setState(State.STAND);
             }
         }
     }
