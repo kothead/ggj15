@@ -21,6 +21,8 @@ public class Player extends Sprite {
 
     enum State {
         WALK("char-walking", 4, 0.1f),
+        WALK_HOLD("char-hold-walk", 2, 0.2f),
+        STAND_HOLD("char-hold-stand", 1, 0),
         STAND("char-stand", 2, 0.2f),
         SUCK("char-suck", 1, 0);
 
@@ -129,6 +131,12 @@ public class Player extends Sprite {
         setSize(getRegionWidth(), getRegionHeight());
         setOriginCenter();
         super.draw(batch);
+
+        if (block != null) {
+            float x = getX() + Direction.getDx(gravity.getOpposite()) * Planet.BLOCK_SIZE;
+            float y = getY() + Direction.getDy(gravity.getOpposite()) * Planet.BLOCK_SIZE;
+            batch.draw(block.getTexture(), x, y);
+        }
     }
 
     private void setRotation() {
@@ -254,9 +262,17 @@ public class Player extends Sprite {
             setState(State.SUCK);
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)
                 || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            setState(State.WALK);
+            if (block != null) {
+                setState(State.WALK_HOLD);
+            } else {
+                setState(State.WALK);
+            }
         } else {
-            setState(State.STAND);
+            if (block != null) {
+                setState(State.STAND_HOLD);
+            } else {
+                setState(State.STAND);
+            }
         }
     }
 
