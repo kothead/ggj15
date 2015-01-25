@@ -2,6 +2,7 @@ package com.ggj15.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,19 +11,32 @@ import com.badlogic.gdx.utils.Array;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
 
+import javax.xml.soap.Text;
+import java.awt.*;
+
 /**
  * Created by kettricken on 24.01.2015.
  */
 public class Player extends Sprite {
 
-    private static final String GRASS = "grass";
+    enum State {
+        WALK("char-walking", 4, 0.1f), STAND("char-stand", 2, 0.2f);
+
+        private Animation animation;
+
+        State(String texture, int count, float duration) {
+            animation = new Animation(duration, ImageCache.getFrames(texture, 1, count));
+        }
+
+        public TextureRegion getFrame(float stateTime) {
+            return animation.getKeyFrame(stateTime, true);
+        }
+    }
 
     private final float FLY_THRESHOLD = 1;
     private final float WALK_SPEED = 100f;
     private final float JUMP_ACCEL = 300f;
     private final float INK_ACCEL = 10f;
-
-    private static final String CHAR_STAND = "char-stand";
 
     private float vx, vy;
     private boolean flying = false;
@@ -31,17 +45,19 @@ public class Player extends Sprite {
 
     private PlayerActor actor;
 
+    private State state;
+    private float stateTime;
+
     public Player() {
-        setRegion(ImageCache.getFrame(CHAR_STAND, 1));
-        setSize(getRegionWidth(), getRegionHeight());
+        setState(State.STAND);
         setX(50);
         setY(500);
-        setOriginCenter();
 
         actor = new PlayerActor();
     }
 
     public void process(float delta, Array<Planet> planets) {
+        updateState(delta);
         processInputOnce();
 
         float force = 0;
@@ -95,9 +111,10 @@ public class Player extends Sprite {
 
     @Override
     public void draw(Batch batch) {
+        setRegion(getStateFrame());
+        setSize(getRegionWidth(), getRegionHeight());
+        setOriginCenter();
         super.draw(batch);
-        batch.draw(this, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
-                getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     private void setRotation() {
@@ -124,6 +141,21 @@ public class Player extends Sprite {
         flying = true;
     }
 
+    private void setState(State state) {
+        if (this.state != state) {
+            this.state = state;
+            stateTime = 0;
+        }
+    }
+
+    private void updateState(float delta) {
+        stateTime += delta;
+    }
+
+    private TextureRegion getStateFrame() {
+        return state.getFrame(stateTime);
+    }
+
     private void processInputOnce() {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             if (gravity == Direction.DOWN) {
@@ -135,6 +167,7 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = -WALK_SPEED;
             }
+            setState(State.WALK);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -147,6 +180,16 @@ public class Player extends Sprite {
             } else if (gravity == Direction.RIGHT) {
                 vy = +WALK_SPEED;
             }
+            setState(State.WALK);
+        }
+
+        if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if (gravity == Direction.DOWN || gravity == Direction.UP) {
+                vx = 0;
+            } else {
+                vy = 0;
+            }
+            setState(State.STAND);
         }
 
         boolean hitUp = Gdx.input.isKeyJustPressed(Input.Keys.W);
@@ -212,15 +255,15 @@ public class Player extends Sprite {
 
         public PlayerActor() {
             textureRegion = ImageCache.getTexture("octopus-icon");
-            setSize(Player.this.getWidth(),// * Configuration.scaleFactorX,
-                    Player.this.getHeight());// * Configuration.scaleFactorY);
-            setOriginCenter();
+            setSize(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+            setOrigin(textureRegion.getRegionWidth() / 2f,
+                    textureRegion.getRegionHeight() / 2f);
         }
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             setRotation(Player.this.getRotation());
-            super.draw(batch, parentAlpha);
+
 
             float x = Player.this.getX() * Configuration.scaleFactorX;
             float y = Player.this.getY() * Configuration.scaleFactorY;
@@ -228,10 +271,15 @@ public class Player extends Sprite {
             float offsetX = getStage().getWidth() / 2f;
             float offsetY = getStage().getHeight() / 2f;
 
-//            if (gravity == Direction.RIGHT)
-//                x += getWidth() / 2f;
-//            if (gravity == Direction.UP)
-//                y += getHeight() / 2f;
+            setPosition(x + offsetX, y + offsetY);
+
+            /*
+             * TODO: do something with this wtf
+             */
+            if (gravity == Direction.RIGHT)
+                x -= getWidth() / 2f;
+            if (gravity == Direction.UP)
+                y -= getHeight() / 2f;
 
             batch.draw(textureRegion,
                  x + offsetX, y + offsetY,

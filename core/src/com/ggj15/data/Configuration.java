@@ -11,8 +11,8 @@ public class Configuration {
     public static float scaleFactorX;
     public static float scaleFactorY;
 
-    public static final float worldMaxWidth = 3000 * MULTIPLIER;
-    public static final float worldMaxHeight = 1800 * MULTIPLIER;
+    public static final float worldMaxWidth = 10000;
+    public static final float worldMaxHeight = 6000;
     public static final float worldMinWidth = -worldMaxWidth;
     public static final float worldMinHeight = -worldMaxHeight;
 
