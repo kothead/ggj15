@@ -11,7 +11,7 @@ import java.io.FileFilter;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		//packAssets();
+		packAssets();
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = (int) (Configuration.WORLD_WIDTH * Configuration.SCALE_FACTOR);
 		config.height = (int) (Configuration.WORLD_HEIGHT * Configuration.SCALE_FACTOR);
@@ -21,7 +21,7 @@ public class DesktopLauncher {
 	}
 
 	private static void packAssets() {
-		File dir = new File("images");
+		File dir = new File("../../images");
 
 		FileFilter filter = new FileFilter() {
 			@Override
@@ -39,7 +39,7 @@ public class DesktopLauncher {
 		settings.paddingY = 4;
 
 		for (File childDir: dir.listFiles(filter)) {
-			TexturePacker.process(settings, childDir.getPath(), "assets/data", childDir.getName());
+			TexturePacker.process(settings, childDir.getPath(), "data", childDir.getName());
 		}
 
 	}
