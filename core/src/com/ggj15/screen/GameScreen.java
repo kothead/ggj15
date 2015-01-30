@@ -74,7 +74,7 @@ public class GameScreen extends BaseScreen {
         for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
             Planet planet = new Planet.Builder().width(6+random.nextInt(6))
                     .height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150)
-                    .speed((random.nextInt(5) + 1) * 150).build();
+                    .speed((random.nextInt(5) + 1) * 15).build();
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
@@ -83,8 +83,8 @@ public class GameScreen extends BaseScreen {
         player.setX(MathUtils.random(planets.get(0).getCleanX(), planets.get(0).getCleanX() + planets.get(0).getCleanWidth()));
         player.setY(planets.get(0).getCleanY() + planets.get(0).getCleanHeight());
 
-        rocket = new Rocket();
-        Planet lastPlanet = planets.get(planets.size - 1);
+        Planet lastPlanet = planets.get(planets.size - 5);
+        rocket = new Rocket(lastPlanet);
         rocket.setX(MathUtils.random(lastPlanet.getCleanX(),lastPlanet.getCleanX() + lastPlanet.getCleanWidth()));
         rocket.setY(lastPlanet.getCleanY() + lastPlanet.getCleanHeight());
         mapStage.addActor(rocket.getActor());
@@ -144,9 +144,10 @@ public class GameScreen extends BaseScreen {
         }
 
         player.process(delta, planets);
-//        for(Planet planet: planets){
-//            planet.process(delta);
-//        }
+        for(Planet planet: planets){
+            planet.process(delta);
+        }
+        rocket.process(delta);
         inkIndicator.setInkLevel(player.getInkLevel());
 
         Gdx.gl.glClearColor(1, 0, 1, 1);
