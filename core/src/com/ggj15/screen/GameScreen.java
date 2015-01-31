@@ -19,6 +19,7 @@ import com.ggj15.data.Messages;
 import com.ggj15.data.MusicCache;
 import com.ggj15.data.SkinCache;
 import com.ggj15.model.*;
+import com.ggj15.utility.Utils;
 
 import java.util.Random;
 
@@ -35,12 +36,11 @@ public class GameScreen extends BaseScreen {
     private Player player;
 
     private Hole hole;
-    private PlanetController planetController;
     private Background background;
     private InkIndicator inkIndicator;
     private HoleIndicator holeIndicator;
     private Rocket rocket;
-
+    private Orbiter orbiter;
     private Array<Planet> planets = new Array<Planet>();
 
     boolean mapMode = false;
@@ -52,8 +52,6 @@ public class GameScreen extends BaseScreen {
     private Label helpLabel;
     private Messages messages;
 
-    public static Random random = new Random();
-
     private Rectangle tmpRectangle = new Rectangle();
 
     public GameScreen(GGJGame game, long seed) {
@@ -61,6 +59,8 @@ public class GameScreen extends BaseScreen {
         this.game = game;
         this.seed = seed;
         hasHelp = seed == SEED_WITH_HELP;
+
+        Random random = Utils.getRandom();
         random.setSeed(seed);
 
         mapStage = new Stage(new StretchViewport(getWorldWidth(), getWorldHeight()));
@@ -69,13 +69,22 @@ public class GameScreen extends BaseScreen {
         Configuration.scaleFactorX = mapStage.getWidth() / (Configuration.worldMaxWidth - Configuration.worldMaxWidth);
         Configuration.scaleFactorY = mapStage.getHeight() / Configuration.worldMaxHeight - Configuration.worldMaxHeight;
 
-        background= new Background((int) getWorldWidth(), (int) getWorldHeight());
+        background = new Background((int) getWorldWidth(), (int) getWorldHeight());
 
-        for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
-            Planet planet = new Planet.Builder().width(6+random.nextInt(6))
-                    .height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150)
-                    .speed((random.nextInt(5) + 1) * 150).build();
+        orbiter = new Orbiter();
+        for (int i = 0, max = 1 + random.nextInt(7); i < max; i++) {
+            int width = 6 + random.nextInt(6);
+            int height = 6 + random.nextInt(6);
+            float radius = orbiter.getAvailableOrbit(width * Planet.BLOCK_SIZE, height * Planet.BLOCK_SIZE);
+            float speed = (random.nextInt(5) + 1) * 50;
+
+            Planet planet = new Planet.Builder().width(width).height(height)
+                    .orbit(random.nextBoolean() ? Orbiter.Orbit.CLOCKWISE : Orbiter.Orbit.COUNTERCLOCKWISE)
+                    .orbitRadius(radius).speed(speed).build();
+
             planets.add(planet);
+            int index = orbiter.add(planet);
+            orbiter.locateOnOrbit(index);
             mapStage.addActor(planet.getActor());
         }
 
@@ -93,8 +102,6 @@ public class GameScreen extends BaseScreen {
 
         hole = new Hole(planets);
         mapStage.addActor(hole.getActor());
-
-        planetController = new PlanetController(planets);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -143,10 +150,8 @@ public class GameScreen extends BaseScreen {
             game.setFinalScreen(true, seed);
         }
 
+        orbiter.process(delta);
         player.process(delta, planets);
-//        for(Planet planet: planets){
-//            planet.process(delta);
-//        }
         inkIndicator.setInkLevel(player.getInkLevel());
 
         Gdx.gl.glClearColor(1, 0, 1, 1);
@@ -170,7 +175,7 @@ public class GameScreen extends BaseScreen {
         background.draw(batch(), 0, 0);
         if (!mapMode) {
             player.draw(batch());
-            for(Planet planet: planets){
+            for (Planet planet: planets){
                 planet.draw(delta, batch());
             }
 
