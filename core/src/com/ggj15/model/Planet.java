@@ -1,11 +1,10 @@
 package com.ggj15.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
@@ -20,11 +19,10 @@ public class Planet {
 
     private enum OrbitDirection{
         DOWN(0,-1), RIGHT(1,0), UP(0,1), LEFT(-1,0);
-        private float multiplierX, multiplierY;
+        private Vector2 speedDirection;
 
         OrbitDirection(float multiplierX, float multiplierY) {
-            this.multiplierX = multiplierX;
-            this.multiplierY = multiplierY;
+            speedDirection = new Vector2(multiplierX, multiplierY);
         }
     }
 
@@ -45,6 +43,8 @@ public class Planet {
     public PlanetActor actor;
 
     private float dx, dy;
+    private Vector2 speedDirection;
+    private boolean isClockwise;
 
     public PlanetActor getActor() {
         return actor;
@@ -148,8 +148,6 @@ public class Planet {
     }
 
     public void draw(float delta, SpriteBatch batch) {
-        //updatePosition(delta);
-
         TextureRegion ink = ImageCache.getTexture(TEXTURE_INK);
 
         for (int i = 0; i < height; i++) {
@@ -165,79 +163,42 @@ public class Planet {
     }
 
     public void process(float delta){
-        float x = getCenterX();
-        float y = getCenterY();
+        Vector2 center = new Vector2(getCenterX(),getCenterY());
 
-        float lBound =  SYSTEM_CENTER.x-orbitRadius; // left
-        float rBound =  SYSTEM_CENTER.x+orbitRadius; // right
-        float uBound =  SYSTEM_CENTER.y+orbitRadius; // upper
-        float bBound =  SYSTEM_CENTER.y-orbitRadius; // bottom
-
-        float[] distances = new float[]{Math.abs(x-rBound),
-                Math.abs(x-lBound),
-                Math.abs(y-uBound),
-                Math.abs(y-bBound)
-        };
-//
-//        Gdx.app.log("111", SYSTEM_CENTER.x + " " + SYSTEM_CENTER.y);
-//        Gdx.app.log("111", x + " " + y);
-//        Gdx.app.log("111", Arrays.toString(distances));
-//
         float distance = speed*delta;
 
-        OrbitDirection orbitDirection = null;
+        Vector2 nextPos = new Vector2(center).add(new Vector2(speedDirection).scl(speed * delta));
 
-        if(Math.abs(x-rBound) <0.001){
-            if(Math.abs(y-bBound) <0.001) {
-                orbitDirection = OrbitDirection.LEFT;
-            } else {
-                orbitDirection = OrbitDirection.DOWN;
-            }
-        } else if(Math.abs(y-uBound) <0.001){
-            orbitDirection = OrbitDirection.RIGHT;
-        } else if(Math.abs(y-bBound) <0.001){
-            if(Math.abs(x-lBound) <0.001) {
-                orbitDirection = OrbitDirection.UP;
-            } else {
-                orbitDirection = OrbitDirection.LEFT;
-            }
-        } else if(Math.abs(x-lBound) <0.001){
-
-            orbitDirection = OrbitDirection.UP;
+        // Manhattan distance
+        if(Math.abs(nextPos.x)+Math.abs(nextPos.y) > orbitRadius*2){
+            // rotate
+            float oldPath = distance - (Math.abs(nextPos.x)+Math.abs(nextPos.y) - orbitRadius*2);
+            center.add(new Vector2(speedDirection).scl(oldPath));
+            speedDirection.rotate90(isClockwise?-1:1);
+            center.add(new Vector2(speedDirection).scl(distance - oldPath));
+        } else {
+            // move forward
+            center.add(new Vector2(speedDirection).scl(speed * delta));
         }
+        setCenterPosition(center.x, center.y);
 
-        if(orbitDirection == null || x>rBound || x<lBound || y>uBound || y<bBound){
-            return;
+        if(Math.abs(Math.abs(center.x)-orbitRadius) > 0.001 && Math.abs(Math.abs(center.y)-orbitRadius) >0.001){
+            Gdx.app.log("Bad state", "Orbit is lost " + center.toString());
         }
+    }
 
-        switch (orbitDirection){
-            case DOWN:
-                if((y-bBound)*(y-bBound-distance)<0){
-                    setCenterPosition(rBound - (distance - (y - bBound)), bBound);
-                    return;
-                }
-                break;
-            case UP:
-                if((y-uBound)*(y-uBound+distance)<0){
-                    setCenterPosition(lBound + (distance - (y - uBound)), uBound);
-                    return;
-                }
-                break;
-            case RIGHT:
-                if((x-rBound)*(x-rBound+distance)<0){
-                    setCenterPosition(rBound, uBound - (distance - (x - rBound)));
-                    return;
-                }
-                break;
-            case LEFT:
-                if((x-lBound)*(x-lBound-distance)<0){
-                    setCenterPosition(lBound, bBound + (distance - (x - lBound)));
-                    return;
-                }
-                break;
+    private OrbitDirection getOrbitDirection(Vector2 center) {
+        OrbitDirection orbitDirection;
+        if(center.y<=center.x && center.y>-center.x){
+            orbitDirection =  OrbitDirection.DOWN;
+        } else if(center.y<center.x && center.y<=-center.x){
+            orbitDirection =  OrbitDirection.LEFT;
+        } else if(center.y>=center.x && center.y<-center.x){
+            orbitDirection =  OrbitDirection.UP;
+        } else {
+            orbitDirection =  OrbitDirection.RIGHT;
         }
-
-        setCenterPosition(x + speed * delta * orbitDirection.multiplierX, y + speed * delta * orbitDirection.multiplierY);
+        return orbitDirection;
     }
 
     public float getInkAmount(Direction gravity, int x, int y) {
@@ -389,12 +350,6 @@ public class Planet {
         }
     }
 
-//    private static Random random = new Random();
-//
-//    static{
-//        random.setSeed(654654L);
-//    }
-
     public static class Builder {
 
         private static final int DEFAULT_INKED_COUNT = 10;
@@ -413,6 +368,8 @@ public class Planet {
             instance.orbitRadius = DEFAULT_ORBIT_RADIUS;
             //instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
             instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius, SYSTEM_CENTER.y - instance.orbitRadius);
+            instance.speedDirection = new Vector2(instance.getOrbitDirection(new Vector2(instance.getCenterX(),instance.getCenterY())).speedDirection);
+            instance.isClockwise = true;
 
 //            instance.setPosition(0, 0);
             inkedCount = DEFAULT_INKED_COUNT;
@@ -458,6 +415,19 @@ public class Planet {
             assert(-2 < x && x < 2 && -2 < y && y < 2);
 
             instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius*x, SYSTEM_CENTER.y - instance.orbitRadius*y);
+            instance.speedDirection = new Vector2(instance.getOrbitDirection(new Vector2(instance.getCenterX(),instance.getCenterY())).speedDirection);
+            return this;
+        }
+
+        /**
+         * @param isClockwise
+         * @return
+         */
+        public Builder clockwise(boolean isClockwise) {
+            instance.isClockwise = isClockwise;
+            if(!isClockwise){
+                instance.speedDirection.rotate90(1).rotate90(1);
+            }
             return this;
         }
 

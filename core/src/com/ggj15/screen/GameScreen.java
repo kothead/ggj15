@@ -74,7 +74,7 @@ public class GameScreen extends BaseScreen {
         for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
             Planet planet = new Planet.Builder().width(6+random.nextInt(6))
                     .height(6 + random.nextInt(6)).orbitRadius(600 + random.nextInt(15) * 150)
-                    .speed((random.nextInt(5) + 1) * 15).build();
+                    .speed((random.nextInt(5) + 1) * 15).clockwise(random.nextBoolean()).build();
             planets.add(planet);
             mapStage.addActor(planet.getActor());
         }
