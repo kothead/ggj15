@@ -75,18 +75,15 @@ public class GameScreen extends BaseScreen {
         for (int i = 1, max = 5+random.nextInt(7); i < max; i++) {
             int width = 6 + random.nextInt(6);
             int height = 6 + random.nextInt(6);
-            // TODO float radius = orbiter.getAvailableOrbit(width * Planet.BLOCK_SIZE, height * Planet.BLOCK_SIZE);
             float radius = 600 + random.nextInt(15) * 150;
             float speed = (random.nextInt(5) + 1) * 50;
             boolean isClockwise = random.nextBoolean();
 
-            Planet planet = new Planet.Builder().width(width).height(height)
-                    .orbitRadius(radius).speed(speed).clockwise(isClockwise).build();
+            Orbit orbit = new Orbit.Builder().orbitRadius(radius).speed(speed).clockwise(isClockwise).build();
+            Planet planet = new Planet.Builder().width(width).height(height).build(orbit);
 
             planets.add(planet);
-            // TODO
-//            int index = orbiter.add(planet);
-//            orbiter.locateOnOrbit(index);
+            orbiter.add(planet, orbit);
             mapStage.addActor(planet.getActor());
         }
 
@@ -153,11 +150,8 @@ public class GameScreen extends BaseScreen {
         }
 
         // TODO
-        // orbiter.process(delta);
+        orbiter.process(delta);
         player.process(delta, planets);
-        for(Planet planet: planets){
-            planet.process(delta);
-        }
         rocket.process(delta);
         inkIndicator.setInkLevel(player.getInkLevel());
 
