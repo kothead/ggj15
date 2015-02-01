@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
 import com.ggj15.screen.GameScreen;
+import com.ggj15.utility.Utils;
 
 /**
  * Created by st on 1/24/15.
@@ -405,8 +406,8 @@ public class Planet {
         public Builder orbitRadius(float orbitRadius) {
             instance.orbitRadius = orbitRadius;
 
-            int x = GameScreen.random.nextInt(3)-1;
-            int y = GameScreen.random.nextInt(3)-1;
+            int x = Utils.getRandom().nextInt(3)-1;
+            int y = Utils.getRandom().nextInt(3)-1;
 
             if(x==y && x==0){
                 x=1;
@@ -454,8 +455,8 @@ public class Planet {
 
             instance.inked = new boolean[instance.height][instance.width];
             for (int i = inkedCount; i >= 0 ;) {
-                int x = GameScreen.random.nextInt(instance.width - 2*SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
-                int y = GameScreen.random.nextInt(instance.height - 2*SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
+                int x = Utils.getRandom().nextInt(instance.width - 2 * SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
+                int y = Utils.getRandom().nextInt(instance.height - 2 * SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
 
                 assert(instance.tiles[y][x] != null);
                 if(!instance.inked[y][x]){
@@ -481,14 +482,14 @@ public class Planet {
             for (int i = SAFE_SIDE_SIZE; i < instance.height - SAFE_SIDE_SIZE; i++) {
                 for (int j = SAFE_SIDE_SIZE; j < instance.width - SAFE_SIDE_SIZE; j++) {
                     if(getBoundaryLevel(i,j)==0){
-                        if(GameScreen.random.nextInt(10)!=0){
+                        if(Utils.getRandom().nextInt(10)!=0){
                             instance.tiles[i][j] = Block.GRASS;
                         } else {
                             instance.tiles[i][j] = Block.TERRA;
 //                            instance.tiles[i][j] = Block.GRASS;
                         }
                     } else if (getBoundaryLevel(i,j)>0 && getBoundaryLevel(i,j)<3){
-                        if(GameScreen.random.nextInt(4)!=0){
+                        if(Utils.getRandom().nextInt(4)!=0){
                             instance.tiles[i][j] = Block.TERRA;
 //                            instance.tiles[i][j] = Block.GRASS;
                         } else {
