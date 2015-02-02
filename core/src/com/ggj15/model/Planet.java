@@ -42,7 +42,6 @@ public class Planet {
 
     public PlanetActor actor;
 
-    private float dx, dy;
     private Vector2 speedDirection;
     private boolean isClockwise;
 
@@ -98,14 +97,6 @@ public class Planet {
         return y;
     }
 
-    public float getDx(){
-        return dx;
-    }
-
-    public float getDy() {
-        return dy;
-    }
-
     public void setPosition(float x, float y) {
 //        this.x = x-getWidth()/2;
 //        this.y = y-getHeight()/2;
@@ -117,8 +108,6 @@ public class Planet {
     public void setCenterPosition(float x, float y) {
         x -= getWidth() / 2;
         y -= getHeight() / 2;
-        dx = x - this.x;
-        dy = y - this.y;
         this.x = x;
         this.y = y;
     }

@@ -66,6 +66,8 @@ public class Player extends Sprite {
     private boolean flying = false;
     private Direction gravity = Direction.DOWN;
     private Planet.Block block;
+    private Planet boundPlanet;
+    private float boundX, boundY;
     private boolean standing = false;
     private float timeHoldingUp = 0;
 
@@ -124,8 +126,15 @@ public class Player extends Sprite {
                     vx += force;
                     break;
             }
-            setX(getX() + planet.getDx());
-            setY(getY() + planet.getDy());
+
+            if (boundPlanet != null && this.boundPlanet == planet) {
+                setX(getX() + planet.getX() - boundX);
+                setY(getY() + planet.getY() - boundY);
+            } else {
+                boundPlanet = planet;
+            }
+            boundX = planet.getX();
+            boundY = planet.getY();
         }
 
         float dx = vx * delta;
