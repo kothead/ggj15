@@ -137,6 +137,8 @@ public class Planet {
     }
 
     public void move(float dx, float dy) {
+        this.dx = dx;
+        this.dy = dy;
         setPosition(getX() + dx, getY() + dy);
     }
 
