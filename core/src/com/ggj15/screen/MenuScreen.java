@@ -21,7 +21,6 @@ public class MenuScreen extends BaseScreen {
     private Background background;
 
     private TextField textField;
-    private TextButton btnPlay, btnExit;
     private MenuController controller;
 
     private float paddingBottom = 70;
@@ -51,7 +50,7 @@ public class MenuScreen extends BaseScreen {
         table.add(innerTable).colspan(3).center().padBottom(paddingBottom);
         table.row();
 
-        btnPlay = new TextButton("PLAY", SkinCache.getDefaultSkin(), "menu");
+        TextButton btnPlay = new TextButton("PLAY", SkinCache.getDefaultSkin(), "menu");
         table.add(btnPlay).padLeft(padding);
 
         btnPlay.addListener(new ClickListener() {
@@ -65,7 +64,7 @@ public class MenuScreen extends BaseScreen {
 
         table.add().expandX();
 
-        btnExit = new TextButton("EXIT", SkinCache.getDefaultSkin(), "menu");
+        TextButton btnExit = new TextButton("EXIT", SkinCache.getDefaultSkin(), "menu");
         table.add(btnExit).padRight(padding);
 
         btnExit.addListener(new ClickListener() {

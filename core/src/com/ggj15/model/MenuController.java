@@ -46,7 +46,7 @@ public class MenuController extends InputAdapter {
     }
 
     @Override
-    public boolean keyUp(int keycode) {
+    public boolean keyDown(int keycode) {
         Actor actor = getSelectedActor();
 
         switch (keycode) {
@@ -81,7 +81,7 @@ public class MenuController extends InputAdapter {
         if (focused != selected) {
             select(focused);
         }
-        return super.touchUp(screenX, screenY, pointer, button);
+        return super.touchDown(screenX, screenY, pointer, button);
     }
 
     public void selectOnLeft() {

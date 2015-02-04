@@ -7,11 +7,13 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ggj15.GGJGame;
 import com.ggj15.data.SkinCache;
 import com.ggj15.data.SoundCache;
 import com.ggj15.model.Background;
+import com.ggj15.model.MenuController;
 
 /**
  * Created by kettricken on 25.01.2015.
@@ -19,6 +21,7 @@ import com.ggj15.model.Background;
 public class FinalScreen extends BaseScreen {
 
     private Background background;
+    private MenuController controller;
 
     private float paddingBottom = 150;
     private float padding = 0;
@@ -53,10 +56,10 @@ public class FinalScreen extends BaseScreen {
 
         table.row();
 
-        Label restartLabel = new Label("RESTART", SkinCache.getDefaultSkin(), "menu");
-        table.add(restartLabel).padLeft(padding);
+        TextButton btnRestart = new TextButton("RESTART", SkinCache.getDefaultSkin(), "menu");
+        table.add(btnRestart).padLeft(padding);
 
-        restartLabel.addListener(new ClickListener() {
+        btnRestart.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
@@ -64,22 +67,29 @@ public class FinalScreen extends BaseScreen {
             }
         });
 
+        controller = new MenuController(stage());
+        controller.add(btnRestart);
+        controller.select(btnRestart);
+
         if (win) {
             table.add().expandX();
 
-            Label nextLabel = new Label("NEXT", SkinCache.getDefaultSkin(), "menu");
-            table.add(nextLabel).padRight(padding);
+            TextButton btnNext = new TextButton("NEXT", SkinCache.getDefaultSkin(), "menu");
+            table.add(btnNext).padRight(padding);
 
-            nextLabel.addListener(new ClickListener() {
+            btnNext.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
                     game.setGameScreen(seed + 1);
                 }
             });
+            controller.add(btnNext);
+            controller.select(btnNext);
         }
 
         InputMultiplexer multiplexer = new InputMultiplexer(new Processor());
+        multiplexer.addProcessor(controller);
         multiplexer.addProcessor(stage());
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -104,7 +114,7 @@ public class FinalScreen extends BaseScreen {
         public boolean keyUp(int keycode) {
             switch (keycode) {
                 case Input.Keys.ESCAPE:
-                    Gdx.app.exit();
+                    getGame().setMenuScreen();
                     return true;
             }
 
