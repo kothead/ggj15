@@ -11,7 +11,7 @@ import java.io.FileFilter;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		packAssets();
+		//packAssets();
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = (int) (Configuration.WORLD_WIDTH * Configuration.SCALE_FACTOR);
 		config.height = (int) (Configuration.WORLD_HEIGHT * Configuration.SCALE_FACTOR);

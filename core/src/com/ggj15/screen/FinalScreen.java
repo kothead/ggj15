@@ -53,7 +53,7 @@ public class FinalScreen extends BaseScreen {
 
         table.row();
 
-        Label restartLabel = new Label("RESTART", SkinCache.getDefaultSkin(), "button-label");
+        Label restartLabel = new Label("RESTART", SkinCache.getDefaultSkin(), "menu");
         table.add(restartLabel).padLeft(padding);
 
         restartLabel.addListener(new ClickListener() {
@@ -67,7 +67,7 @@ public class FinalScreen extends BaseScreen {
         if (win) {
             table.add().expandX();
 
-            Label nextLabel = new Label("NEXT", SkinCache.getDefaultSkin(), "button-label");
+            Label nextLabel = new Label("NEXT", SkinCache.getDefaultSkin(), "menu");
             table.add(nextLabel).padRight(padding);
 
             nextLabel.addListener(new ClickListener() {
