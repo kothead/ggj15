@@ -79,7 +79,7 @@ public class MenuScreen extends BaseScreen {
         controller.add(textField, btnPlay, btnExit);
         controller.select(btnPlay);
 
-        InputMultiplexer multiplexer = new InputMultiplexer(new Processor());
+        InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(controller);
         multiplexer.addProcessor(stage());
         Gdx.input.setInputProcessor(multiplexer);
@@ -97,19 +97,5 @@ public class MenuScreen extends BaseScreen {
 
         stage().act();
         stage().draw();
-    }
-
-    private class Processor extends InputAdapter {
-
-        @Override
-        public boolean keyUp(int keycode) {
-            switch (keycode) {
-                case Input.Keys.ESCAPE:
-                    Gdx.app.exit();
-                    return true;
-            }
-
-            return super.keyUp(keycode);
-        }
     }
 }
