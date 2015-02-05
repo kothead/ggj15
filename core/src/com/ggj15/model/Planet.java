@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ggj15.data.Configuration;
 import com.ggj15.data.ImageCache;
 import com.ggj15.screen.GameScreen;
+import com.ggj15.utility.Utils;
 
 /**
  * Created by st on 1/24/15.
@@ -17,15 +18,6 @@ public class Planet {
 
     public static final int INK_AMOUNT = 10;
 
-    private enum OrbitDirection{
-        DOWN(0,-1), RIGHT(1,0), UP(0,1), LEFT(-1,0);
-        private Vector2 speedDirection;
-
-        OrbitDirection(float multiplierX, float multiplierY) {
-            speedDirection = new Vector2(multiplierX, multiplierY);
-        }
-    }
-
     private static final int DEFAULT_SIZE = 11;
     private static final int SAFE_SIDE_SIZE = 5;
     public static final int BLOCK_SIZE = 64;
@@ -33,21 +25,7 @@ public class Planet {
     private static final float DEFAULT_GRAVITY_FORCE = 10000f;
     private static final float BASE_GRAVITY_DIVIDER = 900f;
 
-
-    private static final float DEFAULT_SPEED = 300f;
-    private static final float DEFAULT_ORBIT_RADIUS = 1200f;
-    private static final Vector2 SYSTEM_CENTER = new Vector2(0, 0);
-
     private static final String TEXTURE_INK = "ink";
-
-    public PlanetActor actor;
-
-    private Vector2 speedDirection;
-    private boolean isClockwise;
-
-    public PlanetActor getActor() {
-        return actor;
-    }
 
     public enum Block {
         ROCK, TERRA, GRASS;
@@ -65,13 +43,14 @@ public class Planet {
 
     private int width, height;
     private float x, y;
+    private float dx, dy;
     private float minX, minY, maxX, maxY;
     private Block[][] tiles;
     private boolean[][] inked;
     private Rectangle objRect, blockRect, intersectionRect, planetRectangle;
     private float force;
-    private float speed;
-    private float orbitRadius;
+
+    public PlanetActor actor;
 
     private Planet() {
         objRect = new Rectangle();
@@ -79,6 +58,10 @@ public class Planet {
         intersectionRect = new Rectangle();
         planetRectangle = new Rectangle();
         actor = new PlanetActor();
+    }
+
+    public PlanetActor getActor() {
+        return actor;
     }
 
     public int getWidth() {
@@ -98,9 +81,6 @@ public class Planet {
     }
 
     public void setPosition(float x, float y) {
-//        this.x = x-getWidth()/2;
-//        this.y = y-getHeight()/2;
-
         this.x = x;
         this.y = y;
     }
@@ -149,45 +129,6 @@ public class Planet {
                 if (inked[i][j]) batch.draw(ink, x, y);
             }
         }
-    }
-
-    public void process(float delta){
-        Vector2 center = new Vector2(getCenterX(),getCenterY());
-
-        float distance = speed*delta;
-
-        Vector2 nextPos = new Vector2(center).add(new Vector2(speedDirection).scl(speed * delta));
-
-        // Manhattan distance
-        if(Math.abs(nextPos.x)+Math.abs(nextPos.y) > orbitRadius*2){
-            // rotate
-            float oldPath = distance - (Math.abs(nextPos.x)+Math.abs(nextPos.y) - orbitRadius*2);
-            center.add(new Vector2(speedDirection).scl(oldPath));
-            speedDirection.rotate90(isClockwise?-1:1);
-            center.add(new Vector2(speedDirection).scl(distance - oldPath));
-        } else {
-            // move forward
-            center.add(new Vector2(speedDirection).scl(speed * delta));
-        }
-        setCenterPosition(center.x, center.y);
-
-        if(Math.abs(Math.abs(center.x)-orbitRadius) > 0.001 && Math.abs(Math.abs(center.y)-orbitRadius) >0.001){
-            Gdx.app.log("Bad state", "Orbit is lost " + center.toString());
-        }
-    }
-
-    private OrbitDirection getOrbitDirection(Vector2 center) {
-        OrbitDirection orbitDirection;
-        if(center.y<=center.x && center.y>-center.x){
-            orbitDirection =  OrbitDirection.DOWN;
-        } else if(center.y<center.x && center.y<=-center.x){
-            orbitDirection =  OrbitDirection.LEFT;
-        } else if(center.y>=center.x && center.y<-center.x){
-            orbitDirection =  OrbitDirection.UP;
-        } else {
-            orbitDirection =  OrbitDirection.RIGHT;
-        }
-        return orbitDirection;
     }
 
     public float getInkAmount(Direction gravity, int x, int y) {
@@ -357,12 +298,6 @@ public class Planet {
             instance.width = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.height = DEFAULT_SIZE + SAFE_SIDE_SIZE * 2;
             instance.force = DEFAULT_GRAVITY_FORCE;
-            instance.speed = DEFAULT_SPEED;
-            instance.orbitRadius = DEFAULT_ORBIT_RADIUS;
-            //instance.setPosition(SYSTEM_CENTER.x-instance.orbitRadius, SYSTEM_CENTER.y-instance.orbitRadius);
-            instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius, SYSTEM_CENTER.y - instance.orbitRadius);
-            instance.speedDirection = new Vector2(instance.getOrbitDirection(new Vector2(instance.getCenterX(),instance.getCenterY())).speedDirection);
-            instance.isClockwise = true;
 
 //            instance.setPosition(0, 0);
             inkedCount = DEFAULT_INKED_COUNT;
@@ -389,42 +324,9 @@ public class Planet {
             return this;
         }
 
-        public Builder speed(float speed) {
-            instance.speed = speed;
-            assert(speed>0);
-            return this;
-        }
 
-        public Builder orbitRadius(float orbitRadius) {
-            instance.orbitRadius = orbitRadius;
 
-            int x = GameScreen.random.nextInt(3)-1;
-            int y = GameScreen.random.nextInt(3)-1;
-
-            if(x==y && x==0){
-                x=1;
-            }
-
-            assert(-2 < x && x < 2 && -2 < y && y < 2);
-
-            instance.setCenterPosition(SYSTEM_CENTER.x - instance.orbitRadius*x, SYSTEM_CENTER.y - instance.orbitRadius*y);
-            instance.speedDirection = new Vector2(instance.getOrbitDirection(new Vector2(instance.getCenterX(),instance.getCenterY())).speedDirection);
-            return this;
-        }
-
-        /**
-         * @param isClockwise
-         * @return
-         */
-        public Builder clockwise(boolean isClockwise) {
-            instance.isClockwise = isClockwise;
-            if(!isClockwise){
-                instance.speedDirection.rotate90(1).rotate90(1);
-            }
-            return this;
-        }
-
-        public Planet build() {
+        public Planet build(Orbit orbit) {
             instance.tiles = new Block[instance.height][instance.width];
 
             // TODO: delete
@@ -439,22 +341,21 @@ public class Planet {
                     rockStrategy();
             }
 
-            inkedCount = (int)instance.orbitRadius/100;
+            instance.setCenterPosition(orbit.getInitialCenter().x,orbit.getInitialCenter().y);
+            inkedCount = (int)orbit.getOrbitRadius()/100;
             if(inkedCount>(instance.width - 2*SAFE_SIDE_SIZE)*(instance.height - 2*SAFE_SIDE_SIZE)){
                 inkedCount = (instance.width - 2*SAFE_SIDE_SIZE)*(instance.height - 2*SAFE_SIDE_SIZE);
             }
-//            assert(inkedCount<(instance.width - 2*SAFE_SIDE_SIZE)*(instance.height - 2*SAFE_SIDE_SIZE));
 
             instance.inked = new boolean[instance.height][instance.width];
             for (int i = inkedCount; i >= 0 ;) {
-                int x = GameScreen.random.nextInt(instance.width - 2*SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
-                int y = GameScreen.random.nextInt(instance.height - 2*SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
+                int x = Utils.getRandom().nextInt(instance.width - 2 * SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
+                int y = Utils.getRandom().nextInt(instance.height - 2 * SAFE_SIDE_SIZE)+SAFE_SIDE_SIZE;
 
                 assert(instance.tiles[y][x] != null);
                 if(!instance.inked[y][x]){
                     instance.inked[y][x] = true;
                     i--;
-                    //instance.tiles[y][x] = Block.ROCK;
                 }
             }
 
@@ -474,23 +375,19 @@ public class Planet {
             for (int i = SAFE_SIDE_SIZE; i < instance.height - SAFE_SIDE_SIZE; i++) {
                 for (int j = SAFE_SIDE_SIZE; j < instance.width - SAFE_SIDE_SIZE; j++) {
                     if(getBoundaryLevel(i,j)==0){
-                        if(GameScreen.random.nextInt(10)!=0){
+                        if(Utils.getRandom().nextInt(10)!=0){
                             instance.tiles[i][j] = Block.GRASS;
                         } else {
                             instance.tiles[i][j] = Block.TERRA;
-//                            instance.tiles[i][j] = Block.GRASS;
                         }
                     } else if (getBoundaryLevel(i,j)>0 && getBoundaryLevel(i,j)<3){
-                        if(GameScreen.random.nextInt(4)!=0){
+                        if(Utils.getRandom().nextInt(4)!=0){
                             instance.tiles[i][j] = Block.TERRA;
-//                            instance.tiles[i][j] = Block.GRASS;
                         } else {
                             instance.tiles[i][j] = Block.ROCK;
-//                            instance.tiles[i][j] = Block.GRASS;
                         }
                     } else {
                         instance.tiles[i][j] = Block.ROCK;
-//                        instance.tiles[i][j] = Block.GRASS;
                     }
                 }
             }
