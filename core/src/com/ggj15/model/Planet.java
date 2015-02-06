@@ -217,23 +217,14 @@ public class Planet {
         int idx = getHorizontalIndex(x);
         int idy = getVerticalIndex(y);
 
-        switch (gravity) {
-            case UP:
-            case DOWN:
-                if (idy >= minY && idy <= maxY) {
-                    if (idx < minX) return Direction.RIGHT;
-                    if (idx > maxX) return Direction.LEFT;
-                }
-                break;
-
-            case LEFT:
-            case RIGHT:
-                if (idx >= minX && idx <= maxX) {
-                    if (idy < minY) return Direction.UP;
-                    if (idy > maxY) return Direction.DOWN;
-                }
-                break;
+        if (idy >= minY && idy <= maxY) {
+            if (idx < minX) return Direction.RIGHT;
+            if (idx > maxX) return Direction.LEFT;
+        } else if (idx >= minX && idx <= maxX) {
+            if (idy < minY) return Direction.UP;
+            if (idy > maxY) return Direction.DOWN;
         }
+        
         return gravity;
     }
 
