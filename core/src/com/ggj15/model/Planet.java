@@ -80,18 +80,7 @@ public class Planet {
         return y;
     }
 
-    public float getDx(){
-        return dx;
-    }
-
-    public float getDy() {
-        return dy;
-    }
-
     public void setPosition(float x, float y) {
-//        this.x = x-getWidth()/2;
-//        this.y = y-getHeight()/2;
-
         this.x = x;
         this.y = y;
     }
@@ -99,8 +88,6 @@ public class Planet {
     public void setCenterPosition(float x, float y) {
         x -= getWidth() / 2;
         y -= getHeight() / 2;
-        dx = x - this.x;
-        dy = y - this.y;
         this.x = x;
         this.y = y;
     }
@@ -147,7 +134,7 @@ public class Planet {
     public float getInkAmount(Direction gravity, int x, int y) {
         int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
         int idy = getVerticalIndex(y) + Direction.getDy(gravity);
-        if(idy > inked.length || idy < 0 || idx <0 || idx > inked[0].length){
+        if(idy >= height || idy < 0 || idx < 0 || idx >= width){
             return INK_AMOUNT;
         }
         inked[idy][idx] = false;
@@ -157,7 +144,7 @@ public class Planet {
     public boolean hasInk(Direction gravity, int x, int y) {
         int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
         int idy = getVerticalIndex(y) + Direction.getDy(gravity);
-        if(idy > inked.length || idy < 0 || idx <0 || idx > inked[0].length){
+        if (idy >= height || idy < 0 || idx < 0 || idx >= width){
             return false;
         }
         return inked[idy][idx];
@@ -166,7 +153,7 @@ public class Planet {
     public Block takeBlock(Direction gravity, int x, int y) {
         int idx = getHorizontalIndex(x) + Direction.getDx(gravity);
         int idy = getVerticalIndex(y) + Direction.getDy(gravity);
-        if(idy > tiles.length || idy < 0 || idx <0 || idx > tiles[0].length){
+        if (idy >= height || idy < 0 || idx < 0 || idx >= width) {
             return null;
         }
         Block block = tiles[idy][idx];
@@ -260,11 +247,15 @@ public class Planet {
     }
 
     private int getHorizontalIndex(float x) {
-        return (int) ((x - this.x) / BLOCK_SIZE);
+        int index = (int) ((x - this.x) / BLOCK_SIZE);
+        if (x - this.x < 0) index -= 1;
+        return index;
     }
 
     private int getVerticalIndex(float y) {
-        return (int) ((y - this.y) / BLOCK_SIZE);
+        int index = (int) ((y - this.y) / BLOCK_SIZE);
+        if (y - this.y < 0) index -= 1;
+        return index;
     }
 
     private void calcLimits() {

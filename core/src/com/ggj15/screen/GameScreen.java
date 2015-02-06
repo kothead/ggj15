@@ -91,7 +91,7 @@ public class GameScreen extends BaseScreen {
         player.setX(MathUtils.random(planets.get(0).getCleanX(), planets.get(0).getCleanX() + planets.get(0).getCleanWidth()));
         player.setY(planets.get(0).getCleanY() + planets.get(0).getCleanHeight());
 
-        Planet lastPlanet = planets.get(planets.size - 5);
+        Planet lastPlanet = planets.get(planets.size - 1);
         rocket = new Rocket(lastPlanet);
         rocket.setX(MathUtils.random(lastPlanet.getCleanX(),lastPlanet.getCleanX() + lastPlanet.getCleanWidth()));
         rocket.setY(lastPlanet.getCleanY() + lastPlanet.getCleanHeight());

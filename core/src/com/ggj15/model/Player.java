@@ -66,6 +66,8 @@ public class Player extends Sprite {
     private boolean flying = false;
     private Direction gravity = Direction.DOWN;
     private Planet.Block block;
+    private Planet boundPlanet;
+    private float boundX, boundY;
     private boolean standing = false;
     private float timeHoldingUp = 0;
 
@@ -102,8 +104,6 @@ public class Player extends Sprite {
             }
         }
 
-        float dx = 0;
-        float dy = 0;
         if (planet != null) {
             gravity = planet.getNewGravity(gravity, getCenterX(), getCenterY());
             standing = planet.hasBlock(getCenterX(), getCenterY(), gravity);
@@ -126,12 +126,19 @@ public class Player extends Sprite {
                     vx += force;
                     break;
             }
-//            dx = planet.getDx();
-//            dy = planet.getDy();
+
+            if (boundPlanet != null && this.boundPlanet == planet) {
+                setX(getX() + planet.getX() - boundX);
+                setY(getY() + planet.getY() - boundY);
+            } else {
+                boundPlanet = planet;
+            }
+            boundX = planet.getX();
+            boundY = planet.getY();
         }
 
-        dx += vx * delta;
-        dy += vy * delta;
+        float dx = vx * delta;
+        float dy = vy * delta;
         for (Planet cur: planets) {
             float[] ds = cur.collide(getX(), getY(),
                     getWidth(), getHeight(), dx, dy);

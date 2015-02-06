@@ -5,14 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ggj15.GGJGame;
 import com.ggj15.data.SkinCache;
 import com.ggj15.model.Background;
+import com.ggj15.model.MenuController;
 
 /**
  * Created by kettricken on 25.01.2015.
@@ -22,6 +21,7 @@ public class MenuScreen extends BaseScreen {
     private Background background;
 
     private TextField textField;
+    private MenuController controller;
 
     private float paddingBottom = 70;
     private float padding = 200;
@@ -38,8 +38,8 @@ public class MenuScreen extends BaseScreen {
 
         table.row();
 
-        Label seedLabel = new Label("SEED:", SkinCache.getDefaultSkin(), "button-label");
-        textField = new TextField("100", SkinCache.getDefaultSkin());
+        Label seedLabel = new Label("SEED:", SkinCache.getDefaultSkin(), "menu");
+        textField = new TextField("100", SkinCache.getDefaultSkin(), "menu");
         textField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
         textField.setAlignment(Align.center);
 
@@ -50,10 +50,10 @@ public class MenuScreen extends BaseScreen {
         table.add(innerTable).colspan(3).center().padBottom(paddingBottom);
         table.row();
 
-        Label playLabel = new Label("PLAY", SkinCache.getDefaultSkin(), "button-label");
-        table.add(playLabel).padLeft(padding);
+        TextButton btnPlay = new TextButton("PLAY", SkinCache.getDefaultSkin(), "menu");
+        table.add(btnPlay).padLeft(padding);
 
-        playLabel.addListener(new ClickListener(){
+        btnPlay.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
@@ -64,10 +64,10 @@ public class MenuScreen extends BaseScreen {
 
         table.add().expandX();
 
-        Label exitLabel = new Label("EXIT", SkinCache.getDefaultSkin(), "button-label");
-        table.add(exitLabel).padRight(padding);
+        TextButton btnExit = new TextButton("EXIT", SkinCache.getDefaultSkin(), "menu");
+        table.add(btnExit).padRight(padding);
 
-        exitLabel.addListener(new ClickListener(){
+        btnExit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
@@ -75,7 +75,12 @@ public class MenuScreen extends BaseScreen {
             }
         });
 
-        InputMultiplexer multiplexer = new InputMultiplexer(new Processor());
+        controller = new MenuController(stage());
+        controller.add(textField, btnPlay, btnExit);
+        controller.select(btnPlay);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(controller);
         multiplexer.addProcessor(stage());
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -92,19 +97,5 @@ public class MenuScreen extends BaseScreen {
 
         stage().act();
         stage().draw();
-    }
-
-    private class Processor extends InputAdapter {
-
-        @Override
-        public boolean keyUp(int keycode) {
-            switch (keycode) {
-                case Input.Keys.ESCAPE:
-                    Gdx.app.exit();
-                    return true;
-            }
-
-            return super.keyDown(keycode);
-        }
     }
 }
