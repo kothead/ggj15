@@ -1,5 +1,6 @@
 package com.ggj15.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -37,6 +38,9 @@ public abstract class BaseScreen extends ScreenAdapter {
         stage = new Stage(new StretchViewport(getWorldWidth() / 2, getWorldHeight() / 2));
         shapes = new ShapeRenderer();
     }
+
+    public abstract void onStart();
+    public abstract void onStop();
 
     @Override
     public void resize(int width, int height) {

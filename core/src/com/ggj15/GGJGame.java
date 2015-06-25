@@ -4,9 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.ggj15.data.ImageCache;
 import com.ggj15.data.SkinCache;
 import com.ggj15.data.SoundCache;
+import com.ggj15.screen.BaseScreen;
 import com.ggj15.screen.FinalScreen;
 import com.ggj15.screen.GameScreen;
 import com.ggj15.screen.MenuScreen;
@@ -28,7 +30,15 @@ public class GGJGame extends Game {
     @Override
 	public void setScreen(Screen screen) {
 		Screen old = getScreen();
+        if (old instanceof BaseScreen) {
+            ((BaseScreen) old).onStop();
+        }
+
 		super.setScreen(screen);
+        if (screen instanceof BaseScreen) {
+            ((BaseScreen) screen).onStart();
+        }
+
 		if (old != null) old.dispose();
 	}
 

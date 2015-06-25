@@ -13,8 +13,9 @@ gwt {
 
     compiler {
         strict = true;
+        style = 'DETAILED';
         enableClosureCompiler = true;
-        disableCastChecking = true;
+        disableCastChecking = false;
     }
 }
 

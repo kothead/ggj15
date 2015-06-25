@@ -54,13 +54,13 @@ public class Messages {
         }
     }
 
-    public void setMessage(int message, Object... objs) {
+    public void setMessage(int message) {
         if ((current == 0 || current == 1 || current == 2 || current == 3 || current == 4)
                 && message != 0 && message != 1
                 && message != 2 && message != 3
                 && message != 4 && message != 5 && message != MESSAGE_NULL) return;
         current = message;
         timer = 0;
-        label.setText(String.format(DEFAULT_MESSAGES[message], objs));
+        label.setText(DEFAULT_MESSAGES[message]);
     }
 }

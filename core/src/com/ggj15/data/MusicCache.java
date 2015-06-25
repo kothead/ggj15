@@ -16,6 +16,7 @@ public class MusicCache {
 
     private static String key = TYNC;
     private static Music music;
+    private static boolean playing = false;
 
     public static void play() {
         if (key != null) play(key);
@@ -24,7 +25,8 @@ public class MusicCache {
     public static void play(String key) {
         if (music != null) {
             if (MusicCache.key.equals(key)) {
-                if (!music.isPlaying()) {
+                if (!isPlaying()) {
+                    playing = true;
                     music.play();
                 }
                 return;
@@ -33,6 +35,7 @@ public class MusicCache {
             }
         }
 
+        playing = true;
         MusicCache.key = key;
         String path  = MUSIC_DIR + key + MUSIC_EXT;
         music = Gdx.audio.newMusic(Gdx.files.internal(path));
@@ -42,15 +45,18 @@ public class MusicCache {
     }
 
     public static boolean isPlaying() {
-        if (music == null) return false;
-        return music.isPlaying();
+        return playing;
     }
 
     public static void pause() {
-        if (isPlaying()) music.pause();
+        if (isPlaying()) {
+            playing = false;
+            music.pause();
+        }
     }
 
     public static void dispose() {
+        pause();
         if (music != null) music.dispose();
         music = null;
     }

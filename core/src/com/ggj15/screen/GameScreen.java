@@ -125,8 +125,6 @@ public class GameScreen extends BaseScreen {
             messages = new Messages(helpLabel);
             messages.setMessage(Messages.START_TUTORIAL);
         }
-
-        MusicCache.play(MusicCache.TYNC);
     }
 
     @Override
@@ -143,10 +141,13 @@ public class GameScreen extends BaseScreen {
 
         if (!player.isAlive()) {
             game.setFinalScreen(false, seed);
+            return;
         } else if (Intersector.intersectRectangles(player.getBoundingRectangle(), hole.getBoundingRectangle(), tmpRectangle)) {
             game.setFinalScreen(false, seed);
+            return;
         } else if (rocket.getBoundingRectangle().contains(player.getBoundingRectangle())) {
             game.setFinalScreen(true, seed);
+            return;
         }
 
         // TODO
@@ -198,10 +199,19 @@ public class GameScreen extends BaseScreen {
     }
 
     @Override
+    public void onStart() {
+        MusicCache.play(MusicCache.TYNC);
+    }
+
+    @Override
+    public void onStop() {
+        MusicCache.pause();
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
         mapStage.dispose();
-        MusicCache.pause();
     }
 
     private class Processor extends InputAdapter {

@@ -25,13 +25,13 @@ public class FinalScreen extends BaseScreen {
 
     private float paddingBottom = 150;
     private float padding = 0;
+
     private float seed = 0;
 
     public FinalScreen(final GGJGame game, boolean win, final long seed) {
         super(game);
         background= new Background((int) getWorldWidth(), (int) getWorldHeight());
         this.seed = seed;
-
         String title = "";
 
         if (win) {
@@ -92,6 +92,16 @@ public class FinalScreen extends BaseScreen {
         multiplexer.addProcessor(controller);
         multiplexer.addProcessor(stage());
         Gdx.input.setInputProcessor(multiplexer);
+    }
+
+    @Override
+    public void onStart() {
+        // nothing
+    }
+
+    @Override
+    public void onStop() {
+        // nothing
     }
 
     @Override

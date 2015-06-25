@@ -98,4 +98,14 @@ public class MenuScreen extends BaseScreen {
         stage().act();
         stage().draw();
     }
+
+    @Override
+    public void onStart() {
+        // nothing
+    }
+
+    @Override
+    public void onStop() {
+        // nothing
+    }
 }
